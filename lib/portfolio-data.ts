@@ -46,11 +46,21 @@ export interface Internship {
   technologies: string[];
 }
 
+export interface Certificate {
+  id: string;
+  title: string;
+  issuer: string;
+  issueDate: string;
+  credentialId: string;
+  certificateUrl: string;
+}
+
 export interface PortfolioData {
   profile: ProfileDetails;
   skills: Skill[];
   projects: Project[];
   internships: Internship[];
+  certificates: Certificate[];
 }
 
 export const DEFAULT_PORTFOLIO_DATA: PortfolioData = {
@@ -141,6 +151,7 @@ export const DEFAULT_PORTFOLIO_DATA: PortfolioData = {
       technologies: ["React", "TypeScript", "Redux Toolkit", "Tailwind CSS"],
     },
   ],
+  certificates: [],
 };
 
 const STORAGE_KEY = "rishabh_portfolio_data_v1";
@@ -164,9 +175,10 @@ export function getPortfolioData(): PortfolioData {
         ...DEFAULT_PORTFOLIO_DATA.profile,
         ...(parsed.profile || {}),
       },
-      skills: parsed.skills || DEFAULT_PORTFOLIO_DATA.skills,
-      projects: parsed.projects || DEFAULT_PORTFOLIO_DATA.projects,
-      internships: parsed.internships || DEFAULT_PORTFOLIO_DATA.internships,
+      skills: parsed.skills || [],
+      projects: parsed.projects || [],
+      internships: parsed.internships || [],
+      certificates: parsed.certificates || [],
     };
   } catch (error) {
     console.error("Error reading portfolio data from localStorage:", error);
@@ -311,6 +323,38 @@ export async function deleteInternshipAPI(id: string): Promise<{ success: boolea
     const json = await res.json();
     if (!res.ok || !json.success) {
       return { success: false, error: json.error || "Failed to delete internship in PostgreSQL" };
+    }
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
+}
+
+export async function saveCertificateAPI(certificate: Certificate): Promise<{ success: boolean; error?: string }> {
+  try {
+    const res = await fetch("/api/admin/certificates", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(certificate),
+    });
+    const json = await res.json();
+    if (!res.ok || !json.success) {
+      return { success: false, error: json.error || "Failed to save certificate in PostgreSQL" };
+    }
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
+}
+
+export async function deleteCertificateAPI(id: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const res = await fetch(`/api/admin/certificates?id=${encodeURIComponent(id)}`, {
+      method: "DELETE",
+    });
+    const json = await res.json();
+    if (!res.ok || !json.success) {
+      return { success: false, error: json.error || "Failed to delete certificate in PostgreSQL" };
     }
     return { success: true };
   } catch (err: any) {

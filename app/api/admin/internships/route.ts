@@ -13,11 +13,12 @@ export async function POST(request: Request) {
       const userId = userRes.rows[0]?.id || 1;
 
       await client.query(
-        `INSERT INTO internships (id, user_id, role, company, duration, description, certificate_url, offer_letter_url, technologies)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        `INSERT INTO internships (id, user_id, role, company, company_name, duration, description, certificate_url, offer_letter_url, technologies)
+         VALUES ($1, $2, $3, $4, $4, $5, $6, $7, $8, $9)
          ON CONFLICT (id) DO UPDATE SET
           role = EXCLUDED.role,
           company = EXCLUDED.company,
+          company_name = EXCLUDED.company_name,
           duration = EXCLUDED.duration,
           description = EXCLUDED.description,
           certificate_url = EXCLUDED.certificate_url,

@@ -1,13 +1,35 @@
-import { Pool } from "pg";
+import { Pool, PoolConfig } from "pg";
 
-const connectionString =
-  process.env.DATABASE_URL ||
-  `postgresql://${process.env.POSTGRES_USER || 'postgres'}:${process.env.POSTGRES_PASSWORD || 'postgres'}@${process.env.POSTGRES_HOST || 'localhost'}:${process.env.POSTGRES_PORT || '5432'}/portfolio`;
+const hasValidConnectionString =
+  process.env.DATABASE_URL &&
+  !process.env.DATABASE_URL.includes("your_password");
 
-export const pool = new Pool({
-  connectionString,
-  connectionTimeoutMillis: 5000,
-});
+const poolConfig: PoolConfig = hasValidConnectionString
+  ? {
+    connectionString: process.env.DATABASE_URL,
+    connectionTimeoutMillis: 5000,
+  }
+  : {
+    host: process.env.DB_HOST || process.env.POSTGRES_HOST || "localhost",
+    port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 5432,
+    user: process.env.DB_USER || process.env.POSTGRES_USER || "postgres",
+    password: process.env.DB_PASSWORD || process.env.POSTGRES_PASSWORD || "",
+    database: process.env.DB_NAME || process.env.POSTGRES_DB || "portfolio",
+    connectionTimeoutMillis: 5000,
+    ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
+  };
+
+// Prevent multiple pool instances in development due to Next.js Fast Refresh / Hot Reloading
+const globalForPg = globalThis as unknown as { pool: Pool | undefined };
+
+export const pool: Pool =
+  globalForPg.pool ?? new Pool(poolConfig);
+
+if (process.env.NODE_ENV !== "production") {
+  globalForPg.pool = pool;
+}
+
+export default pool;
 
 let isInitialized = false;
 
@@ -17,7 +39,7 @@ export async function ensureDatabaseTables() {
   try {
     const client = await pool.connect();
     try {
-      // 1. Ensure Base Users Table exists
+      // 1. Ensure Base Users Table exists & migrate columns
       await client.query(`
         CREATE TABLE IF NOT EXISTS users (
           id SERIAL PRIMARY KEY,
@@ -25,18 +47,22 @@ export async function ensureDatabaseTables() {
           email VARCHAR(100),
           password VARCHAR(50),
           phone VARCHAR(20),
+          location VARCHAR(150) DEFAULT '',
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
       `);
 
-      // 2. Alter existing users table to add all Portfolio columns if missing
       await client.query(`
         ALTER TABLE users
+        ALTER COLUMN password DROP NOT NULL,
+        ALTER COLUMN password SET DEFAULT '',
         ADD COLUMN IF NOT EXISTS title VARCHAR(255) DEFAULT '',
         ADD COLUMN IF NOT EXISTS bio TEXT DEFAULT '',
         ADD COLUMN IF NOT EXISTS about TEXT DEFAULT '',
+        ADD COLUMN IF NOT EXISTS location VARCHAR(150) DEFAULT '',
         ADD COLUMN IF NOT EXISTS avatar_url TEXT DEFAULT '',
+        ADD COLUMN IF NOT EXISTS profile_image TEXT DEFAULT '',
         ADD COLUMN IF NOT EXISTS github_url TEXT DEFAULT '',
         ADD COLUMN IF NOT EXISTS linkedin_url TEXT DEFAULT '',
         ADD COLUMN IF NOT EXISTS twitter_url TEXT DEFAULT '',
@@ -45,19 +71,36 @@ export async function ensureDatabaseTables() {
         ADD COLUMN IF NOT EXISTS completed_projects INT DEFAULT 0;
       `);
 
-      // 3. Skills Table
+      // Ensure profile_image column type is TEXT (in case it was previously created as TIMESTAMP in pgAdmin)
+      try {
+        await client.query(`ALTER TABLE users ALTER COLUMN profile_image TYPE TEXT USING NULL;`);
+      } catch (e) {
+        // Ignore if already TEXT
+      }
+
+      // 2. Skills Table & migrations (supporting skill_name, category_name, skill_level)
       await client.query(`
         CREATE TABLE IF NOT EXISTS skills (
           id VARCHAR(50) PRIMARY KEY,
           user_id INT,
-          name VARCHAR(100) NOT NULL,
-          category VARCHAR(50) NOT NULL,
-          level INT NOT NULL DEFAULT 80,
+          name VARCHAR(100),
+          category VARCHAR(50),
+          level INT DEFAULT 80,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
       `);
 
-      // 4. Projects Table
+      await client.query(`
+        ALTER TABLE skills
+        ADD COLUMN IF NOT EXISTS skill_name VARCHAR(100),
+        ADD COLUMN IF NOT EXISTS category_name VARCHAR(50),
+        ADD COLUMN IF NOT EXISTS skill_level INT DEFAULT 80,
+        ADD COLUMN IF NOT EXISTS name VARCHAR(100),
+        ADD COLUMN IF NOT EXISTS category VARCHAR(50),
+        ADD COLUMN IF NOT EXISTS level INT DEFAULT 80;
+      `);
+
+      // 3. Projects Table & migrations (supporting project_image)
       await client.query(`
         CREATE TABLE IF NOT EXISTS projects (
           id VARCHAR(50) PRIMARY KEY,
@@ -74,13 +117,20 @@ export async function ensureDatabaseTables() {
         );
       `);
 
-      // 5. Internships Table
+      await client.query(`
+        ALTER TABLE projects
+        ADD COLUMN IF NOT EXISTS project_image TEXT,
+        ADD COLUMN IF NOT EXISTS image_url TEXT,
+        ADD COLUMN IF NOT EXISTS tags TEXT[];
+      `);
+
+      // 4. Internships Table & migrations (supporting company_name, start_date, end_date, certificate_id)
       await client.query(`
         CREATE TABLE IF NOT EXISTS internships (
           id VARCHAR(50) PRIMARY KEY,
           user_id INT,
           role VARCHAR(150) NOT NULL,
-          company VARCHAR(150) NOT NULL,
+          company VARCHAR(150),
           duration VARCHAR(100),
           description TEXT,
           certificate_url TEXT,
@@ -88,6 +138,42 @@ export async function ensureDatabaseTables() {
           technologies TEXT[],
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
+      `);
+
+      await client.query(`
+        ALTER TABLE internships
+        ADD COLUMN IF NOT EXISTS company_name VARCHAR(150),
+        ADD COLUMN IF NOT EXISTS company VARCHAR(150),
+        ADD COLUMN IF NOT EXISTS certificate_id VARCHAR(100),
+        ADD COLUMN IF NOT EXISTS start_date VARCHAR(50),
+        ADD COLUMN IF NOT EXISTS end_date VARCHAR(50),
+        ADD COLUMN IF NOT EXISTS duration VARCHAR(100),
+        ADD COLUMN IF NOT EXISTS certificate_url TEXT,
+        ADD COLUMN IF NOT EXISTS offer_letter_url TEXT,
+        ADD COLUMN IF NOT EXISTS technologies TEXT[];
+      `);
+
+      // 5. Certificates Table & migrations (supporting certificate_pdf)
+      await client.query(`
+        CREATE TABLE IF NOT EXISTS certificates (
+          id VARCHAR(50) PRIMARY KEY,
+          user_id INT,
+          title VARCHAR(150),
+          issuer VARCHAR(150),
+          issue_date VARCHAR(50),
+          credential_id VARCHAR(100),
+          certificate_url TEXT,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+
+      await client.query(`
+        ALTER TABLE certificates
+        ADD COLUMN IF NOT EXISTS issuer VARCHAR(150) DEFAULT '',
+        ADD COLUMN IF NOT EXISTS issue_date VARCHAR(50) DEFAULT '',
+        ADD COLUMN IF NOT EXISTS credential_id VARCHAR(100) DEFAULT '',
+        ADD COLUMN IF NOT EXISTS certificate_pdf TEXT,
+        ADD COLUMN IF NOT EXISTS certificate_url TEXT;
       `);
 
       // 6. Check if Rishabh user exists in 'users' table
@@ -167,4 +253,47 @@ export async function ensureDatabaseTables() {
   } catch (error) {
     console.warn("PostgreSQL Connection / Table setup warning:", error);
   }
+}
+
+/**
+ * Dynamic Database Fetch Helpers
+ * These functions perform live SQL queries against your PostgreSQL database server.
+ */
+
+export async function getUsersFromDb() {
+  await ensureDatabaseTables();
+  const res = await pool.query("SELECT * FROM users ORDER BY id ASC");
+  return res.rows;
+}
+
+export async function getSkillsFromDb(userId?: number) {
+  await ensureDatabaseTables();
+  const res = userId
+    ? await pool.query("SELECT * FROM skills WHERE user_id = $1 ORDER BY created_at ASC", [userId])
+    : await pool.query("SELECT * FROM skills ORDER BY created_at ASC");
+  return res.rows;
+}
+
+export async function getProjectsFromDb(userId?: number) {
+  await ensureDatabaseTables();
+  const res = userId
+    ? await pool.query("SELECT * FROM projects WHERE user_id = $1 ORDER BY created_at ASC", [userId])
+    : await pool.query("SELECT * FROM projects ORDER BY created_at ASC");
+  return res.rows;
+}
+
+export async function getInternshipsFromDb(userId?: number) {
+  await ensureDatabaseTables();
+  const res = userId
+    ? await pool.query("SELECT * FROM internships WHERE user_id = $1 ORDER BY created_at ASC", [userId])
+    : await pool.query("SELECT * FROM internships ORDER BY created_at ASC");
+  return res.rows;
+}
+
+export async function getCertificatesFromDb(userId?: number) {
+  await ensureDatabaseTables();
+  const res = userId
+    ? await pool.query("SELECT * FROM certificates WHERE user_id = $1 ORDER BY created_at ASC", [userId])
+    : await pool.query("SELECT * FROM certificates ORDER BY created_at ASC");
+  return res.rows;
 }
