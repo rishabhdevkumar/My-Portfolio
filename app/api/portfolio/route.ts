@@ -14,47 +14,112 @@ export async function GET() {
       if (userRes.rowCount === 0) {
         return NextResponse.json({
           dbConnected: true,
-          data: DEFAULT_PORTFOLIO_DATA,
+          data: {
+            profile: {
+              name: "",
+              title: "",
+              bio: "",
+              about: "",
+              email: "",
+              phone: "",
+              location: "",
+              avatarUrl: "",
+              githubUrl: "",
+              linkedinUrl: "",
+              twitterUrl: "",
+              resumeUrl: "",
+              yearsExperience: 0,
+              completedProjects: 0,
+            },
+            skills: [],
+            projects: [],
+            internships: [],
+            certificates: [],
+          },
         });
       }
 
       const userRow = userRes.rows[0];
       const userId = userRow.id;
 
-      // 2. Fetch Skills
+      // 2. Fetch Skills (supporting both skill_name/category_name/skill_level and name/category/level)
       const skillsRes = await client.query(
-        "SELECT id, name, category, level FROM skills WHERE user_id = $1 OR user_id IS NULL ORDER BY created_at ASC",
+        `SELECT id,
+                COALESCE(skill_name, name, '') as name,
+                COALESCE(category_name, category, 'Other') as category,
+                COALESCE(skill_level, level, 80) as level
+         FROM skills
+         WHERE user_id::text = $1::text OR user_id IS NULL
+         ORDER BY created_at ASC`,
         [userId]
       );
 
-      // 3. Fetch Projects
+      // 3. Fetch Projects (supporting project_image)
       const projectsRes = await client.query(
-        "SELECT id, title, description, category, tags, image_url as \"imageUrl\", live_url as \"liveUrl\", github_url as \"githubUrl\", featured FROM projects WHERE user_id = $1 OR user_id IS NULL ORDER BY created_at ASC",
+        `SELECT id,
+                title,
+                description,
+                category,
+                tags,
+                COALESCE(project_image, image_url, '') as "imageUrl",
+                live_url as "liveUrl",
+                github_url as "githubUrl",
+                featured
+         FROM projects
+         WHERE user_id::text = $1::text OR user_id IS NULL
+         ORDER BY created_at ASC`,
         [userId]
       );
 
-      // 4. Fetch Internships
+      // 4. Fetch Internships (supporting company_name, start_date, end_date)
       const internshipsRes = await client.query(
-        "SELECT id, role, company, duration, description, certificate_url as \"certificateUrl\", offer_letter_url as \"offerLetterUrl\", technologies FROM internships WHERE user_id = $1 OR user_id IS NULL ORDER BY created_at ASC",
+        `SELECT id,
+                role,
+                COALESCE(company_name, company, '') as company,
+                CASE
+                  WHEN start_date IS NOT NULL AND end_date IS NOT NULL THEN start_date || ' - ' || end_date
+                  ELSE COALESCE(duration, '')
+                END as duration,
+                description,
+                COALESCE(certificate_url, '') as "certificateUrl",
+                COALESCE(offer_letter_url, '') as "offerLetterUrl",
+                technologies
+         FROM internships
+         WHERE user_id::text = $1::text OR user_id IS NULL
+         ORDER BY created_at ASC`,
+        [userId]
+      );
+
+      // 5. Fetch Certificates (supporting certificate_pdf)
+      const certificatesRes = await client.query(
+        `SELECT id::text as id,
+                title,
+                COALESCE(issuer, '') as issuer,
+                COALESCE(issue_date, '') as "issueDate",
+                COALESCE(credential_id, '') as "credentialId",
+                COALESCE(certificate_pdf, certificate_url, '') as "certificateUrl"
+         FROM certificates
+         WHERE user_id::text = $1::text OR user_id IS NULL
+         ORDER BY created_at ASC`,
         [userId]
       );
 
       const portfolioData: PortfolioData = {
         profile: {
-          name: userRow.name || DEFAULT_PORTFOLIO_DATA.profile.name,
-          title: userRow.title || DEFAULT_PORTFOLIO_DATA.profile.title,
-          bio: userRow.bio || DEFAULT_PORTFOLIO_DATA.profile.bio,
-          about: userRow.about || DEFAULT_PORTFOLIO_DATA.profile.about,
-          email: userRow.email || DEFAULT_PORTFOLIO_DATA.profile.email,
-          phone: userRow.phone || DEFAULT_PORTFOLIO_DATA.profile.phone,
-          location: userRow.location || DEFAULT_PORTFOLIO_DATA.profile.location,
-          avatarUrl: userRow.avatar_url || DEFAULT_PORTFOLIO_DATA.profile.avatarUrl,
-          githubUrl: userRow.github_url || DEFAULT_PORTFOLIO_DATA.profile.githubUrl,
-          linkedinUrl: userRow.linkedin_url || DEFAULT_PORTFOLIO_DATA.profile.linkedinUrl,
-          twitterUrl: userRow.twitter_url || DEFAULT_PORTFOLIO_DATA.profile.twitterUrl,
-          resumeUrl: userRow.resume_url || DEFAULT_PORTFOLIO_DATA.profile.resumeUrl,
-          yearsExperience: userRow.years_experience ?? DEFAULT_PORTFOLIO_DATA.profile.yearsExperience,
-          completedProjects: userRow.completed_projects ?? DEFAULT_PORTFOLIO_DATA.profile.completedProjects,
+          name: userRow.name || "",
+          title: userRow.title || "",
+          bio: userRow.bio || "",
+          about: userRow.about || "",
+          email: userRow.email || "",
+          phone: userRow.phone || "",
+          location: userRow.location || "",
+          avatarUrl: userRow.avatar_url || userRow.profile_image || "",
+          githubUrl: userRow.github_url || "",
+          linkedinUrl: userRow.linkedin_url || "",
+          twitterUrl: userRow.twitter_url || "",
+          resumeUrl: userRow.resume_url || "",
+          yearsExperience: userRow.years_experience ?? 0,
+          completedProjects: userRow.completed_projects ?? 0,
         },
         skills: skillsRes.rows,
         projects: projectsRes.rows.map((p) => ({
@@ -65,6 +130,7 @@ export async function GET() {
           ...i,
           technologies: i.technologies || [],
         })),
+        certificates: certificatesRes.rows,
       };
 
       return NextResponse.json({

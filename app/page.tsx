@@ -282,22 +282,28 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Hero Image / Card */}
+            {/* Hero Image / Circular Avatar */}
             <div className="lg:col-span-5 flex justify-center lg:justify-end">
               <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-3xl blur opacity-30 group-hover:opacity-60 transition duration-500"></div>
-                <div className="relative w-64 h-64 sm:w-80 sm:h-80 rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-2xl">
-                  {profile.avatarUrl ? (
-                    <img
-                      src={profile.avatarUrl}
-                      alt={profile.name}
-                      className="w-full h-full object-cover rounded-xl"
-                    />
-                  ) : (
-                    <div className="w-full h-full rounded-xl bg-slate-800 flex items-center justify-center text-slate-500">
-                      <Code2 className="w-20 h-20 text-cyan-400" />
-                    </div>
-                  )}
+                {/* Animated Circular Glowing Ring */}
+                <div className="absolute -inset-1.5 bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 rounded-full blur-lg opacity-40 group-hover:opacity-75 transition duration-500 animate-pulse"></div>
+                
+                {/* Outer Circular Container */}
+                <div className="relative w-56 h-56 sm:w-72 sm:h-72 lg:w-80 lg:h-80 rounded-full p-1.5 bg-gradient-to-br from-cyan-500/40 via-blue-500/20 to-indigo-500/40 border border-cyan-500/40 shadow-2xl shadow-cyan-500/20">
+                  {/* Inner Circular Image Container */}
+                  <div className="w-full h-full rounded-full overflow-hidden bg-slate-900/90 border border-slate-800 flex items-center justify-center relative">
+                    {profile.avatarUrl ? (
+                      <img
+                        src={profile.avatarUrl}
+                        alt={profile.name || "Profile Avatar"}
+                        className="w-full h-full object-cover rounded-full group-hover:scale-105 transition-transform duration-500"
+                      />
+                    ) : (
+                      <div className="w-full h-full rounded-full bg-slate-900/80 flex flex-col items-center justify-center text-slate-400 gap-2 p-4">
+                        <Code2 className="w-20 h-20 sm:w-28 sm:h-28 text-cyan-400/90" />
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

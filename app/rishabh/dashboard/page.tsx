@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import {
   fetchPortfolioFromAPI,
@@ -38,6 +38,8 @@ import {
   Database,
   Award,
   FileText,
+  Camera,
+  Upload,
 } from "lucide-react";
 
 function GithubIcon({ className = "w-4 h-4" }: { className?: string }) {
@@ -68,6 +70,28 @@ export default function RishabhDashboardPage() {
   const [editingInternship, setEditingInternship] = useState<Partial<Internship> | null>(null);
   const [isInternshipModalOpen, setIsInternshipModalOpen] = useState(false);
   const [internshipTechInput, setInternshipTechInput] = useState("");
+
+  const avatarFileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      showNotification("Image file size should be less than 5MB.", true);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64Url = event.target?.result as string;
+      if (base64Url) {
+        handleProfileChange("avatarUrl", base64Url);
+        showNotification("Image selected successfully! Click 'Save General Profile' to update.");
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   useEffect(() => {
     fetchPortfolioFromAPI().then((res) => {
@@ -600,15 +624,54 @@ export default function RishabhDashboardPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-slate-800">
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-300">
-                    Avatar Image URL
-                  </label>
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-semibold text-slate-300">
+                      Avatar / Profile Image
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => avatarFileInputRef.current?.click()}
+                      className="text-xs text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-medium bg-cyan-950/60 border border-cyan-500/30 px-2.5 py-1 rounded-lg hover:bg-cyan-900/60 transition-all cursor-pointer shadow-sm"
+                    >
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>Select File from Device</span>
+                    </button>
+                  </div>
+
                   <input
-                    type="url"
-                    value={data.profile.avatarUrl}
-                    onChange={(e) => handleProfileChange("avatarUrl", e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                    type="file"
+                    ref={avatarFileInputRef}
+                    accept="image/*"
+                    onChange={handleImageFileChange}
+                    className="hidden"
                   />
+
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="text"
+                      value={data.profile.avatarUrl}
+                      placeholder="Paste image URL or click button/avatar to select file"
+                      onChange={(e) => handleProfileChange("avatarUrl", e.target.value)}
+                      className="flex-1 px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                    />
+
+                    <div
+                      onClick={() => avatarFileInputRef.current?.click()}
+                      title="Click to select image file from device"
+                      className="relative w-12 h-12 rounded-full p-0.5 bg-gradient-to-r from-cyan-500 to-indigo-500 shrink-0 shadow-lg shadow-cyan-500/20 cursor-pointer group/avatar overflow-hidden"
+                    >
+                      <div className="w-full h-full rounded-full overflow-hidden bg-slate-900 flex items-center justify-center relative">
+                        {data.profile.avatarUrl ? (
+                          <img src={data.profile.avatarUrl} alt="Preview" className="w-full h-full object-cover rounded-full" />
+                        ) : (
+                          <User className="w-6 h-6 text-slate-500" />
+                        )}
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/avatar:opacity-100 flex items-center justify-center transition-opacity rounded-full">
+                          <Camera className="w-4 h-4 text-cyan-300" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-2">

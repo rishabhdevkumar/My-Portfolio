@@ -13,12 +13,15 @@ export async function POST(request: Request) {
       const userId = userRes.rows[0]?.id || 1;
 
       await client.query(
-        `INSERT INTO skills (id, user_id, name, category, level)
-         VALUES ($1, $2, $3, $4, $5)
+        `INSERT INTO skills (id, user_id, name, skill_name, category, category_name, level, skill_level)
+         VALUES ($1, $2, $3, $3, $4, $4, $5, $5)
          ON CONFLICT (id) DO UPDATE SET
           name = EXCLUDED.name,
+          skill_name = EXCLUDED.skill_name,
           category = EXCLUDED.category,
-          level = EXCLUDED.level`,
+          category_name = EXCLUDED.category_name,
+          level = EXCLUDED.level,
+          skill_level = EXCLUDED.skill_level`,
         [skill.id, userId, skill.name, skill.category, skill.level]
       );
       return NextResponse.json({ success: true, message: "Skill saved in PostgreSQL." });

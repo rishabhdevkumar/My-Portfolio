@@ -13,14 +13,15 @@ export async function POST(request: Request) {
       const userId = userRes.rows[0]?.id || 1;
 
       await client.query(
-        `INSERT INTO projects (id, user_id, title, description, category, tags, image_url, live_url, github_url, featured)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        `INSERT INTO projects (id, user_id, title, description, category, tags, image_url, project_image, live_url, github_url, featured)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $7, $8, $9, $10)
          ON CONFLICT (id) DO UPDATE SET
           title = EXCLUDED.title,
           description = EXCLUDED.description,
           category = EXCLUDED.category,
           tags = EXCLUDED.tags,
           image_url = EXCLUDED.image_url,
+          project_image = EXCLUDED.project_image,
           live_url = EXCLUDED.live_url,
           github_url = EXCLUDED.github_url,
           featured = EXCLUDED.featured`,
