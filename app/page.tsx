@@ -47,6 +47,49 @@ function LinkedinIcon({ className = "w-5 h-5" }: { className?: string }) {
   );
 }
 
+function TypewriterName({ name }: { name: string }) {
+  const [displayText, setDisplayText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    const currentName = name || "Rishabh";
+
+    if (!isDeleting) {
+      if (displayText.length < currentName.length) {
+        timeout = setTimeout(() => {
+          setDisplayText(currentName.slice(0, displayText.length + 1));
+        }, 120);
+      } else {
+        timeout = setTimeout(() => {
+          setIsDeleting(true);
+        }, 2000);
+      }
+    } else {
+      if (displayText.length > 0) {
+        timeout = setTimeout(() => {
+          setDisplayText(currentName.slice(0, displayText.length - 1));
+        }, 60);
+      } else {
+        timeout = setTimeout(() => {
+          setIsDeleting(false);
+        }, 400);
+      }
+    }
+
+    return () => clearTimeout(timeout);
+  }, [displayText, isDeleting, name]);
+
+  return (
+    <span className="inline-flex items-center">
+      <span className="bg-gradient-to-r from-[#0d9488] via-[#14b8a6] to-[#0f766e] bg-clip-text text-transparent">
+        {displayText}
+      </span>
+      <span className="inline-block w-[3px] h-[0.8em] ml-1 bg-[#0d9488] animate-pulse rounded-full"></span>
+    </span>
+  );
+}
+
 export default function Home() {
   const [data, setData] = useState<PortfolioData | null>(null);
   const [activeSkillCategory, setActiveSkillCategory] = useState<string>("All");
@@ -77,10 +120,10 @@ export default function Home() {
 
   if (!data) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950 text-slate-200">
+      <div className="min-h-screen flex items-center justify-center bg-[#f0fdfa] text-[#111827]">
         <div className="flex items-center gap-3">
-          <div className="w-6 h-6 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
-          <span className="font-medium text-slate-400">Loading Portfolio...</span>
+          <div className="w-6 h-6 border-2 border-[#0d9488] border-t-transparent rounded-full animate-spin"></div>
+          <span className="font-medium text-[#374151]">Loading Portfolio...</span>
         </div>
       </div>
     );
@@ -113,89 +156,83 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-white">
+    <div className="min-h-screen bg-[#f0fdfa] text-[#111827] flex flex-col font-sans selection:bg-[#0d9488] selection:text-white">
       {/* Background Decorative Gradients */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute -top-40 -left-40 w-80 sm:w-96 h-80 sm:h-96 bg-cyan-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/3 -right-40 w-80 sm:w-96 h-80 sm:h-96 bg-blue-600/10 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-40 left-1/3 w-80 sm:w-96 h-80 sm:h-96 bg-indigo-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute -top-40 -left-40 w-80 sm:w-96 h-80 sm:h-96 bg-[#2dd4bf]/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/3 -right-40 w-80 sm:w-96 h-80 sm:h-96 bg-[#0d9488]/15 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 left-1/3 w-80 sm:w-96 h-80 sm:h-96 bg-[#2dd4bf]/15 rounded-full blur-3xl"></div>
       </div>
 
       {/* Header / Navbar */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-slate-950/80 border-b border-slate-800/60">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
-              R
-            </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
-              {profile.name}
-            </span>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
-            <a href="#about" className="hover:text-cyan-400 transition-colors">
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#f0fdfa]/90 border-b border-[#0d9488]/15 shadow-xs">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-center relative">
+          {/* Desktop Navigation - Centered with Extra Spacing */}
+          <nav className="hidden md:flex items-center gap-10 sm:gap-12 lg:gap-14 text-sm font-semibold text-[#111827]">
+            <a href="#about" className="hover:text-[#0d9488] transition-colors py-1 px-2">
               About
             </a>
-            <a href="#skills" className="hover:text-cyan-400 transition-colors">
+            <a href="#skills" className="hover:text-[#0d9488] transition-colors py-1 px-2">
               Skills
             </a>
-            <a href="#internships" className="hover:text-cyan-400 transition-colors">
+            <a href="#internships" className="hover:text-[#0d9488] transition-colors py-1 px-2">
               Internships
             </a>
-            <a href="#projects" className="hover:text-cyan-400 transition-colors">
+            <a href="#projects" className="hover:text-[#0d9488] transition-colors py-1 px-2">
               Projects
             </a>
-            <a href="#contact" className="hover:text-cyan-400 transition-colors">
+            <a href="#contact" className="hover:text-[#0d9488] transition-colors py-1 px-2">
               Contact
             </a>
           </nav>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white"
-          >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
+          {/* Mobile Menu Button - Right aligned on mobile */}
+          <div className="flex md:hidden w-full justify-between items-center">
+            <span className="text-sm font-bold text-[#111827]">Menu</span>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 rounded-lg bg-white border border-[#0d9488]/20 text-[#111827] hover:text-[#0d9488]"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Dropdown Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-slate-900/95 border-b border-slate-800 px-6 py-4 space-y-3 flex flex-col backdrop-blur-lg">
+          <div className="md:hidden bg-white/95 border-b border-[#0d9488]/20 px-6 py-4 space-y-3 flex flex-col backdrop-blur-lg">
             <a
               href="#about"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-slate-200 hover:text-cyan-400 font-medium py-1"
+              className="text-[#111827] hover:text-[#0d9488] font-medium py-1"
             >
               About
             </a>
             <a
               href="#skills"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-slate-200 hover:text-cyan-400 font-medium py-1"
+              className="text-[#111827] hover:text-[#0d9488] font-medium py-1"
             >
               Skills
             </a>
             <a
               href="#internships"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-slate-200 hover:text-cyan-400 font-medium py-1"
+              className="text-[#111827] hover:text-[#0d9488] font-medium py-1"
             >
               Internships
             </a>
             <a
               href="#projects"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-slate-200 hover:text-cyan-400 font-medium py-1"
+              className="text-[#111827] hover:text-[#0d9488] font-medium py-1"
             >
               Projects
             </a>
             <a
               href="#contact"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-slate-200 hover:text-cyan-400 font-medium py-1"
+              className="text-[#111827] hover:text-[#0d9488] font-medium py-1"
             >
               Contact
             </a>
@@ -209,24 +246,17 @@ export default function Home() {
         <section className="relative pt-12 pb-16 md:pt-28 md:pb-32 px-4 sm:px-6 max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-400 text-xs font-medium backdrop-blur-sm">
-                <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-                <span>Available for Projects & Opportunities</span>
-              </div>
-
               <div className="space-y-3">
-                <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
+                <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight text-[#111827]">
                   Hi, I&apos;m{" "}
-                  <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent">
-                    {profile.name}
-                  </span>
+                  <TypewriterName name={profile.name} />
                 </h1>
-                <h2 className="text-lg sm:text-2xl font-semibold text-slate-300">
+                <h2 className="text-lg sm:text-2xl font-semibold text-[#374151]">
                   {profile.title}
                 </h2>
               </div>
 
-              <p className="text-slate-400 text-sm sm:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+              <p className="text-[#4b5563] text-sm sm:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed">
                 {profile.bio}
               </p>
 
@@ -234,7 +264,7 @@ export default function Home() {
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
                 <a
                   href="#projects"
-                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:scale-[1.02] transition-all flex items-center gap-2 text-sm sm:text-base"
+                  className="px-6 py-3 rounded-xl bg-[#0d9488] hover:bg-[#0f766e] text-white font-semibold shadow-lg shadow-[#0d9488]/25 hover:shadow-[#0d9488]/40 hover:scale-[1.02] transition-all flex items-center gap-2 text-sm sm:text-base"
                 >
                   <span>Explore Projects</span>
                   <ChevronRight className="w-4 h-4" />
@@ -242,21 +272,21 @@ export default function Home() {
 
                 <a
                   href="#contact"
-                  className="px-6 py-3 rounded-xl bg-slate-900 border border-slate-700/80 hover:bg-slate-800 text-slate-200 font-semibold hover:border-slate-600 transition-all flex items-center gap-2 text-sm sm:text-base"
+                  className="px-6 py-3 rounded-xl bg-white border border-[#2dd4bf] hover:bg-[#ccfbf1]/50 text-[#111827] font-semibold transition-all shadow-xs flex items-center gap-2 text-sm sm:text-base"
                 >
                   <span>Contact Me</span>
-                  <Mail className="w-4 h-4" />
+                  <Mail className="w-4 h-4 text-[#0d9488]" />
                 </a>
               </div>
 
               {/* Social Icons */}
-              <div className="flex items-center justify-center lg:justify-start gap-4 pt-4 text-slate-400">
+              <div className="flex items-center justify-center lg:justify-start gap-4 pt-4 text-[#374151]">
                 {profile.githubUrl && (
                   <a
                     href={profile.githubUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 hover:text-cyan-400 hover:border-cyan-500/40 transition-all"
+                    className="p-2.5 rounded-lg bg-white border border-[#2dd4bf]/40 hover:text-[#0d9488] hover:border-[#0d9488] shadow-xs transition-all"
                   >
                     <GithubIcon className="w-5 h-5" />
                   </a>
@@ -266,7 +296,7 @@ export default function Home() {
                     href={profile.linkedinUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 hover:text-cyan-400 hover:border-cyan-500/40 transition-all"
+                    className="p-2.5 rounded-lg bg-white border border-[#2dd4bf]/40 hover:text-[#0d9488] hover:border-[#0d9488] shadow-xs transition-all"
                   >
                     <LinkedinIcon className="w-5 h-5" />
                   </a>
@@ -274,7 +304,7 @@ export default function Home() {
                 {profile.email && (
                   <a
                     href={`mailto:${profile.email}`}
-                    className="p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 hover:text-cyan-400 hover:border-cyan-500/40 transition-all"
+                    className="p-2.5 rounded-lg bg-white border border-[#2dd4bf]/40 hover:text-[#0d9488] hover:border-[#0d9488] shadow-xs transition-all"
                   >
                     <Mail className="w-5 h-5" />
                   </a>
@@ -286,12 +316,12 @@ export default function Home() {
             <div className="lg:col-span-5 flex justify-center lg:justify-end">
               <div className="relative group">
                 {/* Animated Circular Glowing Ring */}
-                <div className="absolute -inset-1.5 bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 rounded-full blur-lg opacity-40 group-hover:opacity-75 transition duration-500 animate-pulse"></div>
+                <div className="absolute -inset-1.5 bg-gradient-to-r from-[#2dd4bf] via-[#0d9488] to-[#14b8a6] rounded-full blur-lg opacity-45 group-hover:opacity-75 transition duration-500 animate-pulse"></div>
                 
                 {/* Outer Circular Container */}
-                <div className="relative w-56 h-56 sm:w-72 sm:h-72 lg:w-80 lg:h-80 rounded-full p-1.5 bg-gradient-to-br from-cyan-500/40 via-blue-500/20 to-indigo-500/40 border border-cyan-500/40 shadow-2xl shadow-cyan-500/20">
+                <div className="relative w-56 h-56 sm:w-72 sm:h-72 lg:w-80 lg:h-80 rounded-full p-1.5 bg-gradient-to-br from-[#2dd4bf]/40 via-[#0d9488]/30 to-[#2dd4bf]/40 border border-[#2dd4bf]/50 shadow-2xl shadow-[#0d9488]/20">
                   {/* Inner Circular Image Container */}
-                  <div className="w-full h-full rounded-full overflow-hidden bg-slate-900/90 border border-slate-800 flex items-center justify-center relative">
+                  <div className="w-full h-full rounded-full overflow-hidden bg-white border border-[#0d9488]/20 flex items-center justify-center relative shadow-inner">
                     {profile.avatarUrl ? (
                       <img
                         src={profile.avatarUrl}
@@ -299,8 +329,8 @@ export default function Home() {
                         className="w-full h-full object-cover rounded-full group-hover:scale-105 transition-transform duration-500"
                       />
                     ) : (
-                      <div className="w-full h-full rounded-full bg-slate-900/80 flex flex-col items-center justify-center text-slate-400 gap-2 p-4">
-                        <Code2 className="w-20 h-20 sm:w-28 sm:h-28 text-cyan-400/90" />
+                      <div className="w-full h-full rounded-full bg-[#ccfbf1] flex flex-col items-center justify-center text-[#0d9488] gap-2 p-4">
+                        <Code2 className="w-20 h-20 sm:w-28 sm:h-28 text-[#0d9488]" />
                       </div>
                     )}
                   </div>
@@ -311,37 +341,37 @@ export default function Home() {
         </section>
 
         {/* STATS STRIP */}
-        <section className="border-y border-slate-800/80 bg-slate-900/40 backdrop-blur-sm py-8 px-4 sm:px-6">
+        <section className="border-y border-[#0d9488]/15 bg-white/70 backdrop-blur-sm py-8 px-4 sm:px-6">
           <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 text-center">
-            <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
-              <div className="text-2xl sm:text-3xl font-extrabold text-cyan-400">
+            <div className="p-4 rounded-xl bg-white border border-[#2dd4bf]/40 shadow-xs">
+              <div className="text-2xl sm:text-3xl font-extrabold text-[#0d9488]">
                 {profile.yearsExperience}+
               </div>
-              <div className="text-[10px] sm:text-xs uppercase tracking-wider text-slate-400 mt-1 font-medium">
+              <div className="text-[10px] sm:text-xs uppercase tracking-wider text-[#111827] mt-1 font-semibold">
                 Years Experience
               </div>
             </div>
-            <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
-              <div className="text-2xl sm:text-3xl font-extrabold text-blue-400">
+            <div className="p-4 rounded-xl bg-white border border-[#2dd4bf]/40 shadow-xs">
+              <div className="text-2xl sm:text-3xl font-extrabold text-[#0d9488]">
                 {profile.completedProjects}+
               </div>
-              <div className="text-[10px] sm:text-xs uppercase tracking-wider text-slate-400 mt-1 font-medium">
+              <div className="text-[10px] sm:text-xs uppercase tracking-wider text-[#111827] mt-1 font-semibold">
                 Completed Projects
               </div>
             </div>
-            <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
-              <div className="text-2xl sm:text-3xl font-extrabold text-teal-400">
+            <div className="p-4 rounded-xl bg-white border border-[#2dd4bf]/40 shadow-xs">
+              <div className="text-2xl sm:text-3xl font-extrabold text-[#0d9488]">
                 {internships.length}
               </div>
-              <div className="text-[10px] sm:text-xs uppercase tracking-wider text-slate-400 mt-1 font-medium">
+              <div className="text-[10px] sm:text-xs uppercase tracking-wider text-[#111827] mt-1 font-semibold">
                 Internships Done
               </div>
             </div>
-            <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
-              <div className="text-2xl sm:text-3xl font-extrabold text-indigo-400">
+            <div className="p-4 rounded-xl bg-white border border-[#2dd4bf]/40 shadow-xs">
+              <div className="text-2xl sm:text-3xl font-extrabold text-[#111827]">
                 {skills.length}+
               </div>
-              <div className="text-[10px] sm:text-xs uppercase tracking-wider text-slate-400 mt-1 font-medium">
+              <div className="text-[10px] sm:text-xs uppercase tracking-wider text-[#111827] mt-1 font-semibold">
                 Core Technologies
               </div>
             </div>
@@ -351,55 +381,48 @@ export default function Home() {
         {/* ABOUT SECTION */}
         <section id="about" className="py-16 sm:py-20 px-4 sm:px-6 max-w-6xl mx-auto">
           <div className="flex flex-col items-center text-center mb-10 sm:mb-12">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-cyan-400 mb-2">
-              Background
-            </h2>
-            <h3 className="text-2xl sm:text-4xl font-bold">About Me</h3>
-            <div className="w-12 h-1 bg-cyan-500 rounded-full mt-3"></div>
+            <h3 className="text-2xl sm:text-4xl font-bold text-[#111827]">About Me</h3>
+            <div className="w-12 h-1 bg-[#2dd4bf] rounded-full mt-3"></div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center bg-slate-900/50 border border-slate-800/80 rounded-2xl p-6 sm:p-10 backdrop-blur-sm shadow-xl">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center bg-white border border-[#0d9488]/15 rounded-2xl p-6 sm:p-10 shadow-lg shadow-[#0d9488]/5">
             <div className="md:col-span-7 space-y-4">
-              <h4 className="text-lg sm:text-xl font-bold text-slate-200 flex items-center gap-2">
-                <Terminal className="w-5 h-5 text-cyan-400" />
-                <span>Crafting Digital Products with Excellence</span>
+              <h4 className="text-lg sm:text-xl font-bold text-[#111827]">
+                Crafting Digital Products with Excellence
               </h4>
-              <p className="text-slate-300 leading-relaxed text-sm sm:text-base">
-                {profile.about}
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-950/60 border border-slate-800">
-                  <MapPin className="w-4 h-4 text-cyan-400 shrink-0" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-[#f0fdfa] border border-[#2dd4bf]/40">
+                  <MapPin className="w-4 h-4 text-[#0d9488] shrink-0" />
                   <div className="text-xs">
-                    <span className="text-slate-500 block">Location</span>
-                    <span className="font-semibold text-slate-200">{profile.location}</span>
+                    <span className="text-[#6b7280] block">Location</span>
+                    <span className="font-semibold text-[#111827]">{profile.location}</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-950/60 border border-slate-800">
-                  <Mail className="w-4 h-4 text-cyan-400 shrink-0" />
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-[#f0fdfa] border border-[#2dd4bf]/40">
+                  <Mail className="w-4 h-4 text-[#0d9488] shrink-0" />
                   <div className="text-xs">
-                    <span className="text-slate-500 block">Email</span>
-                    <span className="font-semibold text-slate-200">{profile.email}</span>
+                    <span className="text-[#6b7280] block">Email</span>
+                    <span className="font-semibold text-[#111827]">{profile.email}</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="md:col-span-5 bg-slate-950/80 border border-slate-800 rounded-xl p-6 space-y-4">
-              <h5 className="font-bold text-slate-300 text-xs sm:text-sm uppercase tracking-wider">
+            <div className="md:col-span-5 bg-[#f0fdfa] border border-[#2dd4bf]/40 rounded-xl p-6 space-y-4">
+              <h5 className="font-bold text-[#111827] text-xs sm:text-sm uppercase tracking-wider">
                 What I Do
               </h5>
-              <ul className="space-y-3 text-xs sm:text-sm text-slate-400">
+              <ul className="space-y-3 text-xs sm:text-sm text-[#374151]">
                 <li className="flex items-start gap-2.5">
-                  <Cpu className="w-4 h-4 text-cyan-400 mt-1 shrink-0" />
+                  <Cpu className="w-4 h-4 text-[#0d9488] mt-1 shrink-0" />
                   <span>Frontend development with React, Next.js & Tailwind CSS</span>
                 </li>
                 <li className="flex items-start gap-2.5">
-                  <Globe className="w-4 h-4 text-blue-400 mt-1 shrink-0" />
+                  <Globe className="w-4 h-4 text-[#0d9488] mt-1 shrink-0" />
                   <span>Backend REST & GraphQL API design with Node.js & PostgreSQL</span>
                 </li>
                 <li className="flex items-start gap-2.5">
-                  <Layers className="w-4 h-4 text-indigo-400 mt-1 shrink-0" />
+                  <Layers className="w-4 h-4 text-[#0d9488] mt-1 shrink-0" />
                   <span>Database modeling, performance optimization & deployment</span>
                 </li>
               </ul>
@@ -410,11 +433,11 @@ export default function Home() {
         {/* SKILLS SECTION */}
         <section id="skills" className="py-16 sm:py-20 px-4 sm:px-6 max-w-6xl mx-auto">
           <div className="flex flex-col items-center text-center mb-10 sm:mb-12">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-cyan-400 mb-2">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-[#0d9488] mb-2">
               Expertise
             </h2>
-            <h3 className="text-2xl sm:text-4xl font-bold">Skills & Technologies</h3>
-            <div className="w-12 h-1 bg-cyan-500 rounded-full mt-3"></div>
+            <h3 className="text-2xl sm:text-4xl font-bold text-[#111827]">Skills & Technologies</h3>
+            <div className="w-12 h-1 bg-[#2dd4bf] rounded-full mt-3"></div>
           </div>
 
           {/* Category Filter */}
@@ -425,8 +448,8 @@ export default function Home() {
                 onClick={() => setActiveSkillCategory(cat)}
                 className={`px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs font-semibold transition-all ${
                   activeSkillCategory === cat
-                    ? "bg-cyan-500 text-white shadow-lg shadow-cyan-500/25"
-                    : "bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-slate-200"
+                    ? "bg-[#0d9488] text-white shadow-md shadow-[#0d9488]/20"
+                    : "bg-white border border-[#0d9488]/20 text-[#111827] hover:bg-[#ccfbf1]/40"
                 }`}
               >
                 {cat}
@@ -439,31 +462,31 @@ export default function Home() {
             {filteredSkills.map((skill) => (
               <div
                 key={skill.id}
-                className="p-4 sm:p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 hover:border-cyan-500/40 transition-all group backdrop-blur-sm"
+                className="p-4 sm:p-5 rounded-2xl bg-white border border-[#0d9488]/15 hover:border-[#2dd4bf] shadow-xs hover:shadow-md transition-all group"
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-cyan-400 group-hover:bg-cyan-500/10 transition-colors">
+                    <div className="w-8 h-8 rounded-lg bg-[#ccfbf1] flex items-center justify-center text-[#0d9488] group-hover:bg-[#2dd4bf]/30 transition-colors">
                       <Code2 className="w-4 h-4" />
                     </div>
-                    <span className="font-semibold text-slate-200 text-sm sm:text-base">
+                    <span className="font-semibold text-[#111827] text-sm sm:text-base">
                       {skill.name}
                     </span>
                   </div>
-                  <span className="text-[11px] font-semibold text-cyan-400 bg-cyan-950/80 px-2.5 py-1 rounded-full border border-cyan-500/20">
+                  <span className="text-[11px] font-semibold text-[#0f766e] bg-[#ccfbf1] px-2.5 py-1 rounded-full border border-[#2dd4bf]/40">
                     {skill.level}%
                   </span>
                 </div>
 
                 {/* Progress bar */}
-                <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                <div className="w-full bg-[#ccfbf1] h-2 rounded-full overflow-hidden">
                   <div
-                    className="bg-gradient-to-r from-cyan-500 to-blue-500 h-full rounded-full transition-all duration-700"
+                    className="bg-[#0d9488] h-full rounded-full transition-all duration-700"
                     style={{ width: `${skill.level}%` }}
                   ></div>
                 </div>
 
-                <span className="text-[10px] sm:text-[11px] text-slate-500 block mt-2">
+                <span className="text-[10px] sm:text-[11px] text-[#6b7280] block mt-2">
                   Category: {skill.category}
                 </span>
               </div>
@@ -474,38 +497,38 @@ export default function Home() {
         {/* INTERNSHIPS SECTION */}
         <section id="internships" className="py-16 sm:py-20 px-4 sm:px-6 max-w-6xl mx-auto">
           <div className="flex flex-col items-center text-center mb-10 sm:mb-12">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-cyan-400 mb-2">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-[#0d9488] mb-2">
               Experience & Credentials
             </h2>
-            <h3 className="text-2xl sm:text-4xl font-bold">Internships & Certificates</h3>
-            <div className="w-12 h-1 bg-cyan-500 rounded-full mt-3"></div>
+            <h3 className="text-2xl sm:text-4xl font-bold text-[#111827]">Internships & Certificates</h3>
+            <div className="w-12 h-1 bg-[#2dd4bf] rounded-full mt-3"></div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             {internships.map((item) => (
               <div
                 key={item.id}
-                className="bg-slate-900/60 border border-slate-800/80 hover:border-cyan-500/40 rounded-2xl p-6 flex flex-col justify-between space-y-5 transition-all backdrop-blur-sm shadow-xl"
+                className="bg-white border border-[#0d9488]/15 hover:border-[#2dd4bf] rounded-2xl p-6 flex flex-col justify-between space-y-5 transition-all shadow-sm hover:shadow-md"
               >
                 <div className="space-y-4">
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div>
-                      <h4 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-                        <Building2 className="w-4 h-4 text-cyan-400 shrink-0" />
+                      <h4 className="text-lg font-bold text-[#111827] flex items-center gap-2">
+                        <Building2 className="w-4 h-4 text-[#0d9488] shrink-0" />
                         <span>{item.role}</span>
                       </h4>
-                      <span className="text-sm font-semibold text-cyan-400">
+                      <span className="text-sm font-semibold text-[#0d9488]">
                         {item.company}
                       </span>
                     </div>
 
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-medium border border-slate-700">
-                      <Calendar className="w-3 h-3 text-cyan-400" />
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ccfbf1] text-[#0f766e] text-xs font-semibold border border-[#2dd4bf]/40">
+                      <Calendar className="w-3 h-3 text-[#0d9488]" />
                       <span>{item.duration}</span>
                     </div>
                   </div>
 
-                  <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
+                  <p className="text-[#374151] text-xs sm:text-sm leading-relaxed">
                     {item.description}
                   </p>
 
@@ -514,7 +537,7 @@ export default function Home() {
                     {item.technologies.map((tech) => (
                       <span
                         key={tech}
-                        className="px-2.5 py-0.5 rounded-md bg-slate-800 text-slate-300 text-xs font-medium border border-slate-700/50"
+                        className="px-2.5 py-0.5 rounded-md bg-[#f0fdfa] text-[#111827] text-xs font-medium border border-[#2dd4bf]/40"
                       >
                         {tech}
                       </span>
@@ -523,15 +546,15 @@ export default function Home() {
                 </div>
 
                 {/* Certificates and Offer Letter Buttons */}
-                <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-slate-800/80">
+                <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-[#0d9488]/15">
                   {item.certificateUrl && (
                     <a
                       href={item.certificateUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="px-3.5 py-2 rounded-xl bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-500/30 text-cyan-300 text-xs font-semibold flex items-center gap-2 transition-colors"
+                      className="px-3.5 py-2 rounded-xl bg-[#ccfbf1] hover:bg-[#2dd4bf]/30 border border-[#2dd4bf] text-[#0f766e] text-xs font-semibold flex items-center gap-2 transition-colors"
                     >
-                      <Award className="w-3.5 h-3.5" />
+                      <Award className="w-3.5 h-3.5 text-[#0d9488]" />
                       <span>View Certificate</span>
                     </a>
                   )}
@@ -541,9 +564,9 @@ export default function Home() {
                       href={item.offerLetterUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-2 transition-colors"
+                      className="px-3.5 py-2 rounded-xl bg-white hover:bg-[#f0fdfa] border border-[#2dd4bf]/50 text-[#111827] text-xs font-semibold flex items-center gap-2 transition-colors"
                     >
-                      <FileText className="w-3.5 h-3.5" />
+                      <FileText className="w-3.5 h-3.5 text-[#0d9488]" />
                       <span>Offer Letter</span>
                     </a>
                   )}
@@ -556,11 +579,11 @@ export default function Home() {
         {/* PROJECTS SECTION */}
         <section id="projects" className="py-16 sm:py-20 px-4 sm:px-6 max-w-6xl mx-auto">
           <div className="flex flex-col items-center text-center mb-10 sm:mb-12">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-cyan-400 mb-2">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-[#0d9488] mb-2">
               Portfolio
             </h2>
-            <h3 className="text-2xl sm:text-4xl font-bold">Featured Projects</h3>
-            <div className="w-12 h-1 bg-cyan-500 rounded-full mt-3"></div>
+            <h3 className="text-2xl sm:text-4xl font-bold text-[#111827]">Featured Projects</h3>
+            <div className="w-12 h-1 bg-[#2dd4bf] rounded-full mt-3"></div>
           </div>
 
           {/* Project Filter */}
@@ -571,8 +594,8 @@ export default function Home() {
                 onClick={() => setActiveProjectCategory(cat)}
                 className={`px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs font-semibold transition-all ${
                   activeProjectCategory === cat
-                    ? "bg-cyan-500 text-white shadow-lg shadow-cyan-500/25"
-                    : "bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-slate-200"
+                    ? "bg-[#0d9488] text-white shadow-md shadow-[#0d9488]/20"
+                    : "bg-white border border-[#0d9488]/20 text-[#111827] hover:bg-[#ccfbf1]/40"
                 }`}
               >
                 {cat}
@@ -585,9 +608,9 @@ export default function Home() {
             {filteredProjects.map((project) => (
               <div
                 key={project.id}
-                className="flex flex-col rounded-2xl bg-slate-900/60 border border-slate-800 overflow-hidden hover:border-cyan-500/40 transition-all group backdrop-blur-sm"
+                className="flex flex-col rounded-2xl bg-white border border-[#0d9488]/15 overflow-hidden hover:border-[#2dd4bf] transition-all group shadow-sm hover:shadow-lg hover:shadow-[#0d9488]/5"
               >
-                <div className="relative h-48 w-full bg-slate-800 overflow-hidden">
+                <div className="relative h-48 w-full bg-[#f0fdfa] overflow-hidden">
                   {project.imageUrl ? (
                     <img
                       src={project.imageUrl}
@@ -595,12 +618,12 @@ export default function Home() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-600">
+                    <div className="w-full h-full flex items-center justify-center text-[#2dd4bf]">
                       <Briefcase className="w-12 h-12" />
                     </div>
                   )}
                   {project.featured && (
-                    <span className="absolute top-3 right-3 bg-cyan-500 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md">
+                    <span className="absolute top-3 right-3 bg-[#0d9488] text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md">
                       Featured
                     </span>
                   )}
@@ -608,13 +631,13 @@ export default function Home() {
 
                 <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
                   <div className="space-y-2">
-                    <span className="text-xs font-medium text-cyan-400">
+                    <span className="text-xs font-semibold text-[#0d9488]">
                       {project.category}
                     </span>
-                    <h4 className="text-lg sm:text-xl font-bold text-slate-100 group-hover:text-cyan-300 transition-colors">
+                    <h4 className="text-lg sm:text-xl font-bold text-[#111827] group-hover:text-[#0d9488] transition-colors">
                       {project.title}
                     </h4>
-                    <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
+                    <p className="text-[#374151] text-xs sm:text-sm leading-relaxed">
                       {project.description}
                     </p>
                   </div>
@@ -624,7 +647,7 @@ export default function Home() {
                     {project.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="px-2.5 py-0.5 rounded-md bg-slate-800 text-slate-300 text-xs font-medium border border-slate-700/50"
+                        className="px-2.5 py-0.5 rounded-md bg-[#ccfbf1]/60 text-[#0f766e] text-xs font-semibold border border-[#2dd4bf]/40"
                       >
                         {tag}
                       </span>
@@ -632,13 +655,13 @@ export default function Home() {
                   </div>
 
                   {/* Links */}
-                  <div className="flex items-center gap-3 pt-3 border-t border-slate-800/80">
+                  <div className="flex items-center gap-3 pt-3 border-t border-[#0d9488]/15">
                     {project.liveUrl && (
                       <a
                         href={project.liveUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex items-center gap-1.5 text-xs font-semibold text-cyan-400 hover:text-cyan-300 transition-colors"
+                        className="flex items-center gap-1.5 text-xs font-bold text-[#0d9488] hover:text-[#0f766e] transition-colors"
                       >
                         <span>Live Demo</span>
                         <ArrowUpRight className="w-3.5 h-3.5" />
@@ -649,7 +672,7 @@ export default function Home() {
                         href={project.githubUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-slate-200 transition-colors ml-auto"
+                        className="flex items-center gap-1.5 text-xs font-semibold text-[#374151] hover:text-[#111827] transition-colors ml-auto"
                       >
                         <GithubIcon className="w-3.5 h-3.5" />
                         <span>Source Code</span>
@@ -665,34 +688,34 @@ export default function Home() {
         {/* CONTACT SECTION */}
         <section id="contact" className="py-16 sm:py-20 px-4 sm:px-6 max-w-6xl mx-auto">
           <div className="flex flex-col items-center text-center mb-10 sm:mb-12">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-cyan-400 mb-2">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-[#0d9488] mb-2">
               Get In Touch
             </h2>
-            <h3 className="text-2xl sm:text-4xl font-bold">Contact Me</h3>
-            <div className="w-12 h-1 bg-cyan-500 rounded-full mt-3"></div>
+            <h3 className="text-2xl sm:text-4xl font-bold text-[#111827]">Contact Me</h3>
+            <div className="w-12 h-1 bg-[#2dd4bf] rounded-full mt-3"></div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Info */}
             <div className="lg:col-span-5 space-y-6">
-              <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-6">
-                <h4 className="text-lg sm:text-xl font-bold text-slate-200">
+              <div className="p-6 rounded-2xl bg-white border border-[#0d9488]/15 space-y-6 shadow-sm">
+                <h4 className="text-lg sm:text-xl font-bold text-[#111827]">
                   Let&apos;s build something great together
                 </h4>
-                <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
+                <p className="text-[#374151] text-xs sm:text-sm leading-relaxed">
                   Feel free to reach out for project inquiries, collaborations, or just a quick tech chat!
                 </p>
 
                 <div className="space-y-4">
-                  <div className="flex items-center gap-4 p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-                    <div className="p-3 rounded-lg bg-cyan-500/10 text-cyan-400">
+                  <div className="flex items-center gap-4 p-3 rounded-xl bg-[#f0fdfa] border border-[#2dd4bf]/40">
+                    <div className="p-3 rounded-lg bg-[#ccfbf1] text-[#0d9488]">
                       <Mail className="w-5 h-5" />
                     </div>
                     <div>
-                      <span className="text-xs text-slate-500 block">Email</span>
+                      <span className="text-xs text-[#6b7280] block">Email</span>
                       <a
                         href={`mailto:${profile.email}`}
-                        className="font-semibold text-slate-200 hover:text-cyan-400 transition-colors text-xs sm:text-sm"
+                        className="font-semibold text-[#111827] hover:text-[#0d9488] transition-colors text-xs sm:text-sm"
                       >
                         {profile.email}
                       </a>
@@ -700,26 +723,26 @@ export default function Home() {
                   </div>
 
                   {profile.phone && (
-                    <div className="flex items-center gap-4 p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-                      <div className="p-3 rounded-lg bg-blue-500/10 text-blue-400">
+                    <div className="flex items-center gap-4 p-3 rounded-xl bg-[#f0fdfa] border border-[#2dd4bf]/40">
+                      <div className="p-3 rounded-lg bg-[#ccfbf1] text-[#0d9488]">
                         <Phone className="w-5 h-5" />
                       </div>
                       <div>
-                        <span className="text-xs text-slate-500 block">Phone</span>
-                        <span className="font-semibold text-slate-200 text-xs sm:text-sm">
+                        <span className="text-xs text-[#6b7280] block">Phone</span>
+                        <span className="font-semibold text-[#111827] text-xs sm:text-sm">
                           {profile.phone}
                         </span>
                       </div>
                     </div>
                   )}
 
-                  <div className="flex items-center gap-4 p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-                    <div className="p-3 rounded-lg bg-indigo-500/10 text-indigo-400">
+                  <div className="flex items-center gap-4 p-3 rounded-xl bg-[#f0fdfa] border border-[#2dd4bf]/40">
+                    <div className="p-3 rounded-lg bg-[#ccfbf1] text-[#0d9488]">
                       <MapPin className="w-5 h-5" />
                     </div>
                     <div>
-                      <span className="text-xs text-slate-500 block">Location</span>
-                      <span className="font-semibold text-slate-200 text-xs sm:text-sm">
+                      <span className="text-xs text-[#6b7280] block">Location</span>
+                      <span className="font-semibold text-[#111827] text-xs sm:text-sm">
                         {profile.location}
                       </span>
                     </div>
@@ -729,14 +752,14 @@ export default function Home() {
             </div>
 
             {/* Form */}
-            <div className="lg:col-span-7 bg-slate-900/60 border border-slate-800 rounded-2xl p-6 sm:p-8">
+            <div className="lg:col-span-7 bg-white border border-[#0d9488]/15 rounded-2xl p-6 sm:p-8 shadow-sm">
               {contactSubmitted ? (
                 <div className="h-full flex flex-col items-center justify-center py-12 text-center space-y-3">
-                  <div className="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-full bg-[#ccfbf1] text-[#0d9488] flex items-center justify-center">
                     <UserCheck className="w-6 h-6" />
                   </div>
-                  <h4 className="text-xl font-bold text-slate-100">Message Sent!</h4>
-                  <p className="text-slate-400 text-sm max-w-sm">
+                  <h4 className="text-xl font-bold text-[#111827]">Message Sent!</h4>
+                  <p className="text-[#374151] text-sm max-w-sm">
                     Thank you for reaching out. I will get back to you shortly!
                   </p>
                 </div>
@@ -744,7 +767,7 @@ export default function Home() {
                 <form onSubmit={handleContactSubmit} className="space-y-5">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div className="space-y-2">
-                      <label className="text-xs font-semibold text-slate-300">
+                      <label className="text-xs font-semibold text-[#111827]">
                         Your Name
                       </label>
                       <input
@@ -755,11 +778,11 @@ export default function Home() {
                           setContactForm({ ...contactForm, name: e.target.value })
                         }
                         placeholder="John Doe"
-                        className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-cyan-500 text-sm"
+                        className="w-full px-4 py-3 rounded-xl bg-white border border-[#0d9488]/20 text-[#111827] placeholder-[#9ca3af] focus:outline-none focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 text-sm"
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-xs font-semibold text-slate-300">
+                      <label className="text-xs font-semibold text-[#111827]">
                         Your Email
                       </label>
                       <input
@@ -770,13 +793,13 @@ export default function Home() {
                           setContactForm({ ...contactForm, email: e.target.value })
                         }
                         placeholder="john@example.com"
-                        className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-cyan-500 text-sm"
+                        className="w-full px-4 py-3 rounded-xl bg-white border border-[#0d9488]/20 text-[#111827] placeholder-[#9ca3af] focus:outline-none focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 text-sm"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold text-slate-300">
+                    <label className="text-xs font-semibold text-[#111827]">
                       Message
                     </label>
                     <textarea
@@ -787,13 +810,13 @@ export default function Home() {
                         setContactForm({ ...contactForm, message: e.target.value })
                       }
                       placeholder="Hi Rishabh, I'd like to discuss a project..."
-                      className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-cyan-500 text-sm resize-none"
+                      className="w-full px-4 py-3 rounded-xl bg-white border border-[#0d9488]/20 text-[#111827] placeholder-[#9ca3af] focus:outline-none focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 text-sm resize-none"
                     ></textarea>
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:scale-[1.01] transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
+                    className="w-full py-3.5 rounded-xl bg-[#0d9488] hover:bg-[#0f766e] text-white font-semibold shadow-lg shadow-[#0d9488]/25 hover:shadow-[#0d9488]/40 hover:scale-[1.01] transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
                   >
                     <span>Send Message</span>
                     <Send className="w-4 h-4" />
@@ -806,11 +829,11 @@ export default function Home() {
       </main>
 
       {/* FOOTER */}
-      <footer className="border-t border-slate-800/80 bg-slate-950 py-8 px-4 sm:px-6 z-10">
+      <footer className="border-t border-[#0d9488]/15 bg-white py-8 px-4 sm:px-6 z-10">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-300">{profile.name}</span>
-            <span className="text-slate-600 text-xs sm:text-sm">
+            <span className="font-bold text-[#111827]">{profile.name}</span>
+            <span className="text-[#6b7280] text-xs sm:text-sm">
               © {new Date().getFullYear()} All rights reserved.
             </span>
           </div>

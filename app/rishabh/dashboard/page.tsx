@@ -112,10 +112,10 @@ export default function RishabhDashboardPage() {
 
   if (!data) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950 text-slate-200">
+      <div className="min-h-screen flex items-center justify-center bg-white text-slate-800">
         <div className="flex items-center gap-3">
-          <div className="w-6 h-6 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
-          <span className="font-medium text-slate-400">Loading Dashboard...</span>
+          <div className="w-6 h-6 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+          <span className="font-medium text-slate-500">Loading Dashboard...</span>
         </div>
       </div>
     );
@@ -383,12 +383,12 @@ export default function RishabhDashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
       {/* Toast Notification */}
       {toastMessage && (
         <div
           className={`fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl text-white font-medium shadow-2xl animate-bounce text-xs sm:text-sm max-w-xs sm:max-w-md ${
-            toastMessage.isError ? "bg-amber-600" : "bg-cyan-500"
+            toastMessage.isError ? "bg-amber-600" : "bg-emerald-600"
           }`}
         >
           {toastMessage.isError ? (
@@ -401,40 +401,38 @@ export default function RishabhDashboardPage() {
       )}
 
       {/* Admin Navbar */}
-      <header className="sticky top-0 z-40 bg-slate-900 border-b border-slate-800">
+      <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-xs">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+              className="p-2 rounded-lg bg-slate-100 text-slate-700 hover:text-slate-900 hover:bg-slate-200 transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
             </Link>
             <div>
-              <h1 className="text-sm sm:text-base font-bold text-slate-100 flex items-center gap-2">
-                <span>Rishabh Admin Dashboard</span>
-                <span className="px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-500/30 text-[10px] uppercase font-bold hidden sm:inline-block">
-                  /rishabh/dashboard
-                </span>
+              <h1 className="text-sm sm:text-base font-bold text-slate-900">
+                {data.profile.name || "Rishabh Dev Kumar"}
               </h1>
-              <p className="text-[11px] sm:text-xs text-slate-400 flex items-center gap-1.5 mt-0.5">
-                <Database className="w-3 h-3 text-cyan-400 shrink-0" />
-                <span>DB &apos;portfolio&apos; &bull; Table &apos;users&apos; &bull; {dbConnected ? "PostgreSQL Active" : "Local Mode (Check .env.local DB Password)"}</span>
-              </p>
+              {data.profile.email && (
+                <p className="text-xs text-slate-500 font-medium">
+                  {data.profile.email}
+                </p>
+              )}
             </div>
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={handleResetDefaults}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700 transition-colors"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-200 transition-colors"
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Reset Defaults</span>
+              <span>Reset</span>
             </button>
             <Link
               href="/"
-              className="flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-white text-xs font-semibold shadow-md shadow-cyan-500/20 transition-all"
+              className="flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-md shadow-emerald-600/20 transition-all"
             >
               <Globe className="w-3.5 h-3.5" />
               <span>View Portfolio</span>
@@ -446,13 +444,13 @@ export default function RishabhDashboardPage() {
       {/* Main Admin Content */}
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Mobile-Friendly Horizontally Scrollable Tabs */}
-        <div className="flex border-b border-slate-800 mb-8 overflow-x-auto no-scrollbar space-x-2 pb-1">
+        <div className="flex border-b border-[#0d9488]/15 mb-8 overflow-x-auto no-scrollbar space-x-2 pb-1">
           <button
             onClick={() => setActiveTab("profile")}
-            className={`flex items-center gap-2 px-4 sm:px-5 py-3 text-xs sm:text-sm font-semibold border-b-2 whitespace-nowrap transition-all ${
+            className={`flex items-center gap-2 px-4 sm:px-5 py-3 text-xs sm:text-sm font-semibold rounded-t-xl transition-all ${
               activeTab === "profile"
-                ? "border-cyan-500 text-cyan-400"
-                : "border-transparent text-slate-400 hover:text-slate-200"
+                ? "border-b-2 border-[#0d9488] text-[#0d9488] bg-white shadow-xs"
+                : "border-b-2 border-transparent text-[#374151] hover:text-[#0d9488] hover:bg-white/50"
             }`}
           >
             <User className="w-4 h-4" />
@@ -460,10 +458,10 @@ export default function RishabhDashboardPage() {
           </button>
           <button
             onClick={() => setActiveTab("skills")}
-            className={`flex items-center gap-2 px-4 sm:px-5 py-3 text-xs sm:text-sm font-semibold border-b-2 whitespace-nowrap transition-all ${
+            className={`flex items-center gap-2 px-4 sm:px-5 py-3 text-xs sm:text-sm font-semibold rounded-t-xl transition-all ${
               activeTab === "skills"
-                ? "border-cyan-500 text-cyan-400"
-                : "border-transparent text-slate-400 hover:text-slate-200"
+                ? "border-b-2 border-[#0d9488] text-[#0d9488] bg-white shadow-xs"
+                : "border-b-2 border-transparent text-[#374151] hover:text-[#0d9488] hover:bg-white/50"
             }`}
           >
             <Layers className="w-4 h-4" />
@@ -471,10 +469,10 @@ export default function RishabhDashboardPage() {
           </button>
           <button
             onClick={() => setActiveTab("internships")}
-            className={`flex items-center gap-2 px-4 sm:px-5 py-3 text-xs sm:text-sm font-semibold border-b-2 whitespace-nowrap transition-all ${
+            className={`flex items-center gap-2 px-4 sm:px-5 py-3 text-xs sm:text-sm font-semibold rounded-t-xl transition-all ${
               activeTab === "internships"
-                ? "border-cyan-500 text-cyan-400"
-                : "border-transparent text-slate-400 hover:text-slate-200"
+                ? "border-b-2 border-[#0d9488] text-[#0d9488] bg-white shadow-xs"
+                : "border-b-2 border-transparent text-[#374151] hover:text-[#0d9488] hover:bg-white/50"
             }`}
           >
             <Award className="w-4 h-4" />
@@ -482,10 +480,10 @@ export default function RishabhDashboardPage() {
           </button>
           <button
             onClick={() => setActiveTab("projects")}
-            className={`flex items-center gap-2 px-4 sm:px-5 py-3 text-xs sm:text-sm font-semibold border-b-2 whitespace-nowrap transition-all ${
+            className={`flex items-center gap-2 px-4 sm:px-5 py-3 text-xs sm:text-sm font-semibold rounded-t-xl transition-all ${
               activeTab === "projects"
-                ? "border-cyan-500 text-cyan-400"
-                : "border-transparent text-slate-400 hover:text-slate-200"
+                ? "border-b-2 border-[#0d9488] text-[#0d9488] bg-white shadow-xs"
+                : "border-b-2 border-transparent text-[#374151] hover:text-[#0d9488] hover:bg-white/50"
             }`}
           >
             <Briefcase className="w-4 h-4" />
@@ -496,15 +494,15 @@ export default function RishabhDashboardPage() {
         {/* TAB 1: PERSONAL DETAILS */}
         {activeTab === "profile" && (
           <form onSubmit={handleSaveProfile} className="space-y-6">
-            <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 sm:p-8 space-y-6">
-              <h2 className="text-base sm:text-lg font-bold text-slate-100 flex items-center gap-2 border-b border-slate-800 pb-4">
-                <Sparkles className="w-5 h-5 text-cyan-400" />
-                <span>General Profile Information (DB: portfolio, Table: users)</span>
+            <div className="bg-white border border-[#0d9488]/15 rounded-2xl p-5 sm:p-8 space-y-6 shadow-sm shadow-[#0d9488]/5">
+              <h2 className="text-base sm:text-lg font-bold text-[#111827] flex items-center gap-2 border-b border-[#0d9488]/15 pb-4">
+                <Sparkles className="w-5 h-5 text-[#0d9488]" />
+                <span>General Profile Information</span>
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-[#111827]">
                     Full Name
                   </label>
                   <input
@@ -512,12 +510,12 @@ export default function RishabhDashboardPage() {
                     required
                     value={data.profile.name}
                     onChange={(e) => handleProfileChange("name", e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-[#111827]">
                     Professional Title
                   </label>
                   <input
@@ -525,76 +523,76 @@ export default function RishabhDashboardPage() {
                     required
                     value={data.profile.title}
                     onChange={(e) => handleProfileChange("title", e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-300">
+                <label className="text-xs font-semibold text-[#111827]">
                   Short Hero Bio
                 </label>
                 <textarea
                   rows={2}
                   value={data.profile.bio}
                   onChange={(e) => handleProfileChange("bio", e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none resize-none"
+                  className="w-full px-4 py-2.5 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none resize-none shadow-xs"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-300">
+                <label className="text-xs font-semibold text-[#111827]">
                   Detailed About Description
                 </label>
                 <textarea
                   rows={4}
                   value={data.profile.about}
                   onChange={(e) => handleProfileChange("about", e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none resize-none"
+                  className="w-full px-4 py-2.5 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none resize-none shadow-xs"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-[#111827]">
                     Email Address
                   </label>
                   <input
                     type="email"
                     value={data.profile.email}
                     onChange={(e) => handleProfileChange("email", e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-[#111827]">
                     Phone Number
                   </label>
                   <input
                     type="text"
                     value={data.profile.phone}
                     onChange={(e) => handleProfileChange("phone", e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-[#111827]">
                     Location
                   </label>
                   <input
                     type="text"
                     value={data.profile.location}
                     onChange={(e) => handleProfileChange("location", e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-[#111827]">
                     Years of Experience
                   </label>
                   <input
@@ -603,12 +601,12 @@ export default function RishabhDashboardPage() {
                     onChange={(e) =>
                       handleProfileChange("yearsExperience", Number(e.target.value))
                     }
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-[#111827]">
                     Completed Projects Count
                   </label>
                   <input
@@ -617,21 +615,21 @@ export default function RishabhDashboardPage() {
                     onChange={(e) =>
                       handleProfileChange("completedProjects", Number(e.target.value))
                     }
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-slate-800">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-[#0d9488]/15">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-semibold text-slate-300">
+                    <label className="text-xs font-semibold text-[#111827]">
                       Avatar / Profile Image
                     </label>
                     <button
                       type="button"
                       onClick={() => avatarFileInputRef.current?.click()}
-                      className="text-xs text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-medium bg-cyan-950/60 border border-cyan-500/30 px-2.5 py-1 rounded-lg hover:bg-cyan-900/60 transition-all cursor-pointer shadow-sm"
+                      className="text-xs text-[#0f766e] flex items-center gap-1 font-semibold bg-[#ccfbf1] border border-[#2dd4bf] px-3 py-1.5 rounded-xl hover:bg-[#2dd4bf]/30 transition-all cursor-pointer shadow-xs"
                     >
                       <Upload className="w-3.5 h-3.5" />
                       <span>Select File from Device</span>
@@ -652,22 +650,22 @@ export default function RishabhDashboardPage() {
                       value={data.profile.avatarUrl}
                       placeholder="Paste image URL or click button/avatar to select file"
                       onChange={(e) => handleProfileChange("avatarUrl", e.target.value)}
-                      className="flex-1 px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                      className="flex-1 px-4 py-2.5 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
                     />
 
                     <div
                       onClick={() => avatarFileInputRef.current?.click()}
                       title="Click to select image file from device"
-                      className="relative w-12 h-12 rounded-full p-0.5 bg-gradient-to-r from-cyan-500 to-indigo-500 shrink-0 shadow-lg shadow-cyan-500/20 cursor-pointer group/avatar overflow-hidden"
+                      className="relative w-12 h-12 rounded-full p-0.5 bg-gradient-to-r from-[#2dd4bf] to-[#0d9488] shrink-0 shadow-md shadow-[#0d9488]/20 cursor-pointer group/avatar overflow-hidden"
                     >
-                      <div className="w-full h-full rounded-full overflow-hidden bg-slate-900 flex items-center justify-center relative">
+                      <div className="w-full h-full rounded-full overflow-hidden bg-white border border-slate-200 flex items-center justify-center relative">
                         {data.profile.avatarUrl ? (
                           <img src={data.profile.avatarUrl} alt="Preview" className="w-full h-full object-cover rounded-full" />
                         ) : (
-                          <User className="w-6 h-6 text-slate-500" />
+                          <User className="w-6 h-6 text-[#0d9488]" />
                         )}
                         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/avatar:opacity-100 flex items-center justify-center transition-opacity rounded-full">
-                          <Camera className="w-4 h-4 text-cyan-300" />
+                          <Camera className="w-4 h-4 text-[#2dd4bf]" />
                         </div>
                       </div>
                     </div>
@@ -675,38 +673,38 @@ export default function RishabhDashboardPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-[#111827]">
                     GitHub Profile URL
                   </label>
                   <input
                     type="url"
                     value={data.profile.githubUrl}
                     onChange={(e) => handleProfileChange("githubUrl", e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-[#111827]">
                     LinkedIn Profile URL
                   </label>
                   <input
                     type="url"
                     value={data.profile.linkedinUrl}
                     onChange={(e) => handleProfileChange("linkedinUrl", e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-[#111827]">
                     Twitter / X Profile URL
                   </label>
                   <input
                     type="url"
                     value={data.profile.twitterUrl}
                     onChange={(e) => handleProfileChange("twitterUrl", e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
                   />
                 </div>
               </div>
@@ -715,7 +713,7 @@ export default function RishabhDashboardPage() {
             <div className="flex justify-end">
               <button
                 type="submit"
-                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-white font-semibold shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2 transition-all text-sm"
+                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#0d9488] hover:bg-[#0f766e] text-white font-semibold shadow-lg shadow-[#0d9488]/20 flex items-center justify-center gap-2 transition-all text-sm"
               >
                 <Save className="w-4 h-4" />
                 <span>Save Profile Changes</span>
@@ -729,14 +727,14 @@ export default function RishabhDashboardPage() {
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h2 className="text-base sm:text-lg font-bold text-slate-100">Technical Skills</h2>
-                <p className="text-xs text-slate-400">
+                <h2 className="text-base sm:text-lg font-bold text-[#111827]">Technical Skills</h2>
+                <p className="text-xs text-[#6b7280]">
                   Add, modify or remove skills shown on your portfolio
                 </p>
               </div>
               <button
                 onClick={handleOpenAddSkill}
-                className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-white text-xs font-semibold flex items-center justify-center gap-2 shadow-md"
+                className="px-4 py-2 rounded-xl bg-[#0d9488] hover:bg-[#0f766e] text-white text-xs font-semibold flex items-center justify-center gap-2 shadow-md shadow-[#0d9488]/20 transition-all"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add New Skill</span>
@@ -747,16 +745,16 @@ export default function RishabhDashboardPage() {
               {data.skills.map((skill) => (
                 <div
                   key={skill.id}
-                  className="p-5 rounded-xl bg-slate-900/70 border border-slate-800 flex items-center justify-between group hover:border-slate-700 transition-all"
+                  className="p-5 rounded-2xl bg-white border border-[#0d9488]/15 flex items-center justify-between group hover:border-[#2dd4bf] shadow-xs hover:shadow-md transition-all"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-slate-100 text-sm">{skill.name}</span>
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-medium">
+                      <span className="font-bold text-[#111827] text-sm">{skill.name}</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#ccfbf1] text-[#0f766e] font-semibold border border-[#2dd4bf]/30">
                         {skill.category}
                       </span>
                     </div>
-                    <div className="text-xs text-cyan-400 font-medium">
+                    <div className="text-xs text-[#0d9488] font-semibold">
                       Proficiency: {skill.level}%
                     </div>
                   </div>
@@ -764,13 +762,13 @@ export default function RishabhDashboardPage() {
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => handleOpenEditSkill(skill)}
-                      className="p-2 rounded-lg text-slate-400 hover:text-cyan-400 hover:bg-slate-800 transition-colors"
+                      className="p-2 rounded-lg text-[#6b7280] hover:text-[#0d9488] hover:bg-[#f0fdfa] transition-colors"
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDeleteSkill(skill.id, skill.name)}
-                      className="p-2 rounded-lg text-slate-400 hover:text-red-400 hover:bg-slate-800 transition-colors"
+                      className="p-2 rounded-lg text-[#6b7280] hover:text-rose-600 hover:bg-rose-50 transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -786,16 +784,16 @@ export default function RishabhDashboardPage() {
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h2 className="text-base sm:text-lg font-bold text-slate-100">
+                <h2 className="text-base sm:text-lg font-bold text-[#111827]">
                   Internships & Certifications
                 </h2>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-[#6b7280]">
                   Manage internships, roles, certificates, and offer letters
                 </p>
               </div>
               <button
                 onClick={handleOpenAddInternship}
-                className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-white text-xs font-semibold flex items-center justify-center gap-2 shadow-md"
+                className="px-4 py-2 rounded-xl bg-[#0d9488] hover:bg-[#0f766e] text-white text-xs font-semibold flex items-center justify-center gap-2 shadow-md shadow-[#0d9488]/20 transition-all"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add Internship</span>
@@ -806,24 +804,24 @@ export default function RishabhDashboardPage() {
               {data.internships.map((item) => (
                 <div
                   key={item.id}
-                  className="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between space-y-4 hover:border-slate-700 transition-all"
+                  className="bg-white border border-[#0d9488]/15 rounded-2xl p-5 flex flex-col justify-between space-y-4 hover:border-[#2dd4bf] shadow-xs hover:shadow-md transition-all"
                 >
                   <div className="space-y-3">
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <span className="text-xs font-semibold text-cyan-400">
+                        <span className="text-xs font-bold text-[#0d9488]">
                           {item.company}
                         </span>
-                        <h3 className="text-base font-bold text-slate-100">
+                        <h3 className="text-base font-bold text-[#111827]">
                           {item.role}
                         </h3>
-                        <span className="text-xs text-slate-400 block mt-0.5">
+                        <span className="text-xs text-[#6b7280] block mt-0.5">
                           {item.duration}
                         </span>
                       </div>
                     </div>
 
-                    <p className="text-xs text-slate-400 leading-relaxed line-clamp-3">
+                    <p className="text-xs text-[#374151] leading-relaxed line-clamp-3">
                       {item.description}
                     </p>
 
@@ -831,7 +829,7 @@ export default function RishabhDashboardPage() {
                       {item.technologies.map((tech) => (
                         <span
                           key={tech}
-                          className="px-2 py-0.5 rounded bg-slate-800 text-[10px] text-slate-300 font-medium"
+                          className="px-2 py-0.5 rounded bg-[#f0fdfa] text-[#111827] text-[10px] font-semibold border border-[#2dd4bf]/40"
                         >
                           {tech}
                         </span>
@@ -839,21 +837,21 @@ export default function RishabhDashboardPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between pt-3 border-t border-slate-800/80">
+                  <div className="flex items-center justify-between pt-3 border-t border-[#0d9488]/15">
                     <div className="flex items-center gap-2 text-xs">
                       {item.certificateUrl ? (
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-500/30 font-semibold flex items-center gap-1">
+                        <span className="text-[10px] px-2 py-0.5 rounded bg-[#ccfbf1] text-[#0f766e] border border-[#2dd4bf]/40 font-semibold flex items-center gap-1">
                           <Award className="w-3 h-3" /> Certificate
                         </span>
                       ) : (
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-500">
+                        <span className="text-[10px] px-2 py-0.5 rounded bg-slate-100 text-[#6b7280]">
                           No Certificate
                         </span>
                       )}
 
                       {item.offerLetterUrl && (
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-semibold flex items-center gap-1">
-                          <FileText className="w-3 h-3" /> Offer Letter
+                        <span className="text-[10px] px-2 py-0.5 rounded bg-white text-[#111827] border border-[#2dd4bf]/40 font-semibold flex items-center gap-1">
+                          <FileText className="w-3 h-3 text-[#0d9488]" /> Offer Letter
                         </span>
                       )}
                     </div>
@@ -861,13 +859,13 @@ export default function RishabhDashboardPage() {
                     <div className="flex items-center gap-1">
                       <button
                         onClick={() => handleOpenEditInternship(item)}
-                        className="p-2 rounded-lg text-slate-400 hover:text-cyan-400 hover:bg-slate-800 transition-colors"
+                        className="p-2 rounded-lg text-[#6b7280] hover:text-[#0d9488] hover:bg-[#f0fdfa] transition-colors"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDeleteInternship(item.id, item.role)}
-                        className="p-2 rounded-lg text-slate-400 hover:text-red-400 hover:bg-slate-800 transition-colors"
+                        className="p-2 rounded-lg text-[#6b7280] hover:text-rose-600 hover:bg-rose-50 transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -884,14 +882,14 @@ export default function RishabhDashboardPage() {
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h2 className="text-base sm:text-lg font-bold text-slate-100">Projects Showcase</h2>
-                <p className="text-xs text-slate-400">
+                <h2 className="text-base sm:text-lg font-bold text-[#111827]">Projects Showcase</h2>
+                <p className="text-xs text-[#6b7280]">
                   Manage the portfolio projects displayed to visitors
                 </p>
               </div>
               <button
                 onClick={handleOpenAddProject}
-                className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-white text-xs font-semibold flex items-center justify-center gap-2 shadow-md"
+                className="px-4 py-2 rounded-xl bg-[#0d9488] hover:bg-[#0f766e] text-white text-xs font-semibold flex items-center justify-center gap-2 shadow-md shadow-[#0d9488]/20 transition-all"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add New Project</span>
@@ -902,26 +900,26 @@ export default function RishabhDashboardPage() {
               {data.projects.map((project) => (
                 <div
                   key={project.id}
-                  className="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between space-y-4 hover:border-slate-700 transition-all"
+                  className="bg-white border border-[#0d9488]/15 rounded-2xl p-5 flex flex-col justify-between space-y-4 hover:border-[#2dd4bf] shadow-xs hover:shadow-md transition-all"
                 >
                   <div className="space-y-3">
                     <div className="flex items-start justify-between">
                       <div>
-                        <span className="text-xs font-semibold text-cyan-400">
+                        <span className="text-xs font-bold text-[#0d9488]">
                           {project.category}
                         </span>
-                        <h3 className="text-base font-bold text-slate-100">
+                        <h3 className="text-base font-bold text-[#111827]">
                           {project.title}
                         </h3>
                       </div>
                       {project.featured && (
-                        <span className="text-[10px] font-bold uppercase tracking-wider bg-cyan-950 text-cyan-400 border border-cyan-500/30 px-2 py-0.5 rounded-full">
+                        <span className="text-[10px] font-bold uppercase tracking-wider bg-[#0d9488] text-white px-2.5 py-0.5 rounded-full shadow-xs">
                           Featured
                         </span>
                       )}
                     </div>
 
-                    <p className="text-xs text-slate-400 leading-relaxed line-clamp-2">
+                    <p className="text-xs text-[#374151] leading-relaxed line-clamp-2">
                       {project.description}
                     </p>
 
@@ -929,7 +927,7 @@ export default function RishabhDashboardPage() {
                       {project.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="px-2 py-0.5 rounded bg-slate-800 text-[10px] text-slate-300 font-medium"
+                          className="px-2 py-0.5 rounded bg-[#ccfbf1]/60 text-[#0f766e] text-[10px] font-semibold border border-[#2dd4bf]/40"
                         >
                           {tag}
                         </span>
@@ -937,14 +935,14 @@ export default function RishabhDashboardPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between pt-3 border-t border-slate-800/80">
+                  <div className="flex items-center justify-between pt-3 border-t border-[#0d9488]/15">
                     <div className="flex items-center gap-2 text-xs">
                       {project.liveUrl && (
                         <a
                           href={project.liveUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="text-cyan-400 hover:underline flex items-center gap-1"
+                          className="text-[#0d9488] hover:underline font-semibold flex items-center gap-1"
                         >
                           <ExternalLink className="w-3 h-3" />
                           <span>Live</span>
@@ -955,7 +953,7 @@ export default function RishabhDashboardPage() {
                           href={project.githubUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="text-slate-400 hover:underline flex items-center gap-1"
+                          className="text-[#374151] hover:underline flex items-center gap-1"
                         >
                           <GithubIcon className="w-3 h-3" />
                           <span>Repo</span>
@@ -966,13 +964,13 @@ export default function RishabhDashboardPage() {
                     <div className="flex items-center gap-1">
                       <button
                         onClick={() => handleOpenEditProject(project)}
-                        className="p-2 rounded-lg text-slate-400 hover:text-cyan-400 hover:bg-slate-800 transition-colors"
+                        className="p-2 rounded-lg text-[#6b7280] hover:text-[#0d9488] hover:bg-[#f0fdfa] transition-colors"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDeleteProject(project.id, project.title)}
-                        className="p-2 rounded-lg text-slate-400 hover:text-red-400 hover:bg-slate-800 transition-colors"
+                        className="p-2 rounded-lg text-[#6b7280] hover:text-rose-600 hover:bg-rose-50 transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -987,31 +985,31 @@ export default function RishabhDashboardPage() {
 
       {/* SKILL MODAL */}
       {isSkillModalOpen && editingSkill && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-[#111827]/40 backdrop-blur-sm flex items-center justify-center p-4">
           <form
             onSubmit={handleSaveSkill}
-            className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-5 shadow-2xl"
+            className="w-full max-w-md bg-white border border-[#0d9488]/20 rounded-2xl p-6 space-y-5 shadow-2xl"
           >
-            <h3 className="text-base font-bold text-slate-100">
+            <h3 className="text-base font-bold text-[#111827]">
               {data.skills.some((s) => s.id === editingSkill.id)
                 ? "Edit Skill"
                 : "Add New Skill"}
             </h3>
 
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-300">Skill Name</label>
+              <label className="text-xs font-semibold text-[#111827]">Skill Name</label>
               <input
                 type="text"
                 required
                 value={editingSkill.name || ""}
                 onChange={(e) => setEditingSkill({ ...editingSkill, name: e.target.value })}
                 placeholder="e.g. Next.js, Docker, Python"
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                className="w-full px-4 py-2.5 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-300">Category</label>
+              <label className="text-xs font-semibold text-[#111827]">Category</label>
               <select
                 value={editingSkill.category || "Frontend"}
                 onChange={(e) =>
@@ -1020,7 +1018,7 @@ export default function RishabhDashboardPage() {
                     category: e.target.value as Skill["category"],
                   })
                 }
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                className="w-full px-4 py-2.5 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
               >
                 <option value="Frontend">Frontend</option>
                 <option value="Backend">Backend</option>
@@ -1030,7 +1028,7 @@ export default function RishabhDashboardPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-300">
+              <label className="text-xs font-semibold text-[#111827]">
                 Proficiency Level ({editingSkill.level || 80}%)
               </label>
               <input
@@ -1041,7 +1039,7 @@ export default function RishabhDashboardPage() {
                 onChange={(e) =>
                   setEditingSkill({ ...editingSkill, level: Number(e.target.value) })
                 }
-                className="w-full accent-cyan-500"
+                className="w-full accent-[#0d9488]"
               />
             </div>
 
@@ -1049,13 +1047,13 @@ export default function RishabhDashboardPage() {
               <button
                 type="button"
                 onClick={() => setIsSkillModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold"
+                className="px-4 py-2 rounded-xl bg-[#f0fdfa] border border-[#2dd4bf]/60 hover:bg-[#ccfbf1] text-[#111827] text-xs font-semibold"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-white text-xs font-semibold shadow-md shadow-cyan-500/20"
+                className="px-5 py-2 rounded-xl bg-[#0d9488] hover:bg-[#0f766e] text-white text-xs font-semibold shadow-md shadow-[#0d9488]/20"
               >
                 Save Skill
               </button>
@@ -1066,12 +1064,12 @@ export default function RishabhDashboardPage() {
 
       {/* INTERNSHIP MODAL */}
       {isInternshipModalOpen && editingInternship && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-[#111827]/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
           <form
             onSubmit={handleSaveInternship}
-            className="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto"
+            className="w-full max-w-lg bg-white border border-[#0d9488]/20 rounded-2xl p-6 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto"
           >
-            <h3 className="text-base font-bold text-slate-100">
+            <h3 className="text-base font-bold text-[#111827]">
               {data.internships.some((i) => i.id === editingInternship.id)
                 ? "Edit Internship"
                 : "Add New Internship"}
@@ -1079,7 +1077,7 @@ export default function RishabhDashboardPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300">Role / Position</label>
+                <label className="text-xs font-semibold text-[#111827]">Role / Position</label>
                 <input
                   type="text"
                   required
@@ -1088,12 +1086,12 @@ export default function RishabhDashboardPage() {
                     setEditingInternship({ ...editingInternship, role: e.target.value })
                   }
                   placeholder="e.g. Full Stack Developer Intern"
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                  className="w-full px-3.5 py-2 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300">Company Name</label>
+                <label className="text-xs font-semibold text-[#111827]">Company Name</label>
                 <input
                   type="text"
                   required
@@ -1102,13 +1100,13 @@ export default function RishabhDashboardPage() {
                     setEditingInternship({ ...editingInternship, company: e.target.value })
                   }
                   placeholder="e.g. TechCorp Solutions"
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                  className="w-full px-3.5 py-2 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300">Duration</label>
+              <label className="text-xs font-semibold text-[#111827]">Duration</label>
               <input
                 type="text"
                 value={editingInternship.duration || ""}
@@ -1116,12 +1114,12 @@ export default function RishabhDashboardPage() {
                   setEditingInternship({ ...editingInternship, duration: e.target.value })
                 }
                 placeholder="e.g. 6 Months (Jan 2024 - Jun 2024)"
-                className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                className="w-full px-3.5 py-2 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300">Description</label>
+              <label className="text-xs font-semibold text-[#111827]">Description</label>
               <textarea
                 rows={3}
                 value={editingInternship.description || ""}
@@ -1129,12 +1127,12 @@ export default function RishabhDashboardPage() {
                   setEditingInternship({ ...editingInternship, description: e.target.value })
                 }
                 placeholder="Key responsibilities and achievements during internship..."
-                className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none resize-none"
+                className="w-full px-3.5 py-2 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none resize-none shadow-xs"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300">
+              <label className="text-xs font-semibold text-[#111827]">
                 Technologies Used (Comma separated)
               </label>
               <input
@@ -1142,13 +1140,13 @@ export default function RishabhDashboardPage() {
                 value={internshipTechInput}
                 onChange={(e) => setInternshipTechInput(e.target.value)}
                 placeholder="React, Next.js, PostgreSQL"
-                className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                className="w-full px-3.5 py-2 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300">
+                <label className="text-xs font-semibold text-[#111827]">
                   Certificate Document URL
                 </label>
                 <input
@@ -1158,12 +1156,12 @@ export default function RishabhDashboardPage() {
                     setEditingInternship({ ...editingInternship, certificateUrl: e.target.value })
                   }
                   placeholder="https://example.com/certificate.pdf"
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                  className="w-full px-3.5 py-2 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300">
+                <label className="text-xs font-semibold text-[#111827]">
                   Offer Letter Document URL
                 </label>
                 <input
@@ -1173,7 +1171,7 @@ export default function RishabhDashboardPage() {
                     setEditingInternship({ ...editingInternship, offerLetterUrl: e.target.value })
                   }
                   placeholder="https://example.com/offer-letter.pdf"
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                  className="w-full px-3.5 py-2 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
                 />
               </div>
             </div>
@@ -1182,13 +1180,13 @@ export default function RishabhDashboardPage() {
               <button
                 type="button"
                 onClick={() => setIsInternshipModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold"
+                className="px-4 py-2 rounded-xl bg-[#f0fdfa] border border-[#2dd4bf]/60 hover:bg-[#ccfbf1] text-[#111827] text-xs font-semibold"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-white text-xs font-semibold shadow-md shadow-cyan-500/20"
+                className="px-5 py-2 rounded-xl bg-[#0d9488] hover:bg-[#0f766e] text-white text-xs font-semibold shadow-md shadow-[#0d9488]/20"
               >
                 Save Internship
               </button>
@@ -1199,12 +1197,12 @@ export default function RishabhDashboardPage() {
 
       {/* PROJECT MODAL */}
       {isProjectModalOpen && editingProject && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-[#111827]/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
           <form
             onSubmit={handleSaveProject}
-            className="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto"
+            className="w-full max-w-lg bg-white border border-[#0d9488]/20 rounded-2xl p-6 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto"
           >
-            <h3 className="text-base font-bold text-slate-100">
+            <h3 className="text-base font-bold text-[#111827]">
               {data.projects.some((p) => p.id === editingProject.id)
                 ? "Edit Project"
                 : "Add New Project"}
@@ -1212,7 +1210,7 @@ export default function RishabhDashboardPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300">
+                <label className="text-xs font-semibold text-[#111827]">
                   Project Title
                 </label>
                 <input
@@ -1223,12 +1221,12 @@ export default function RishabhDashboardPage() {
                     setEditingProject({ ...editingProject, title: e.target.value })
                   }
                   placeholder="e.g. AI SaaS Dashboard"
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                  className="w-full px-3.5 py-2 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300">Category</label>
+                <label className="text-xs font-semibold text-[#111827]">Category</label>
                 <input
                   type="text"
                   value={editingProject.category || "Full Stack"}
@@ -1236,13 +1234,13 @@ export default function RishabhDashboardPage() {
                     setEditingProject({ ...editingProject, category: e.target.value })
                   }
                   placeholder="e.g. Frontend, Full Stack"
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                  className="w-full px-3.5 py-2 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300">
+              <label className="text-xs font-semibold text-[#111827]">
                 Description
               </label>
               <textarea
@@ -1252,12 +1250,12 @@ export default function RishabhDashboardPage() {
                   setEditingProject({ ...editingProject, description: e.target.value })
                 }
                 placeholder="Brief summary of the project..."
-                className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none resize-none"
+                className="w-full px-3.5 py-2 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none resize-none shadow-xs"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300">
+              <label className="text-xs font-semibold text-[#111827]">
                 Tech Stack Tags (Comma separated)
               </label>
               <input
@@ -1265,12 +1263,12 @@ export default function RishabhDashboardPage() {
                 value={projectTagsInput}
                 onChange={(e) => setProjectTagsInput(e.target.value)}
                 placeholder="Next.js, TypeScript, Tailwind CSS"
-                className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                className="w-full px-3.5 py-2 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300">
+              <label className="text-xs font-semibold text-[#111827]">
                 Image Banner URL
               </label>
               <input
@@ -1280,13 +1278,13 @@ export default function RishabhDashboardPage() {
                   setEditingProject({ ...editingProject, imageUrl: e.target.value })
                 }
                 placeholder="https://images.unsplash.com/..."
-                className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                className="w-full px-3.5 py-2 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300">
+                <label className="text-xs font-semibold text-[#111827]">
                   Live Demo URL
                 </label>
                 <input
@@ -1296,12 +1294,12 @@ export default function RishabhDashboardPage() {
                     setEditingProject({ ...editingProject, liveUrl: e.target.value })
                   }
                   placeholder="https://..."
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                  className="w-full px-3.5 py-2 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300">
+                <label className="text-xs font-semibold text-[#111827]">
                   GitHub Code URL
                 </label>
                 <input
@@ -1311,7 +1309,7 @@ export default function RishabhDashboardPage() {
                     setEditingProject({ ...editingProject, githubUrl: e.target.value })
                   }
                   placeholder="https://github.com/..."
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:border-cyan-500 focus:outline-none"
+                  className="w-full px-3.5 py-2 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
                 />
               </div>
             </div>
@@ -1324,9 +1322,9 @@ export default function RishabhDashboardPage() {
                 onChange={(e) =>
                   setEditingProject({ ...editingProject, featured: e.target.checked })
                 }
-                className="w-4 h-4 rounded accent-cyan-500"
+                className="w-4 h-4 rounded accent-[#0d9488]"
               />
-              <label htmlFor="featuredCheck" className="text-xs font-medium text-slate-300">
+              <label htmlFor="featuredCheck" className="text-xs font-semibold text-[#111827]">
                 Highlight as Featured Project
               </label>
             </div>
@@ -1335,13 +1333,13 @@ export default function RishabhDashboardPage() {
               <button
                 type="button"
                 onClick={() => setIsProjectModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold"
+                className="px-4 py-2 rounded-xl bg-[#f0fdfa] border border-[#2dd4bf]/60 hover:bg-[#ccfbf1] text-[#111827] text-xs font-semibold"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-white text-xs font-semibold shadow-md shadow-cyan-500/20"
+                className="px-5 py-2 rounded-xl bg-[#0d9488] hover:bg-[#0f766e] text-white text-xs font-semibold shadow-md shadow-[#0d9488]/20"
               >
                 Save Project
               </button>
