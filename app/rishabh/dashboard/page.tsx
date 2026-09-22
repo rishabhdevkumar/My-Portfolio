@@ -40,6 +40,7 @@ import {
   FileText,
   Camera,
   Upload,
+  X,
 } from "lucide-react";
 
 function GithubIcon({ className = "w-4 h-4" }: { className?: string }) {
@@ -56,6 +57,35 @@ export default function RishabhDashboardPage() {
   const [dbError, setDbError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"profile" | "skills" | "internships" | "projects">("profile");
   const [toastMessage, setToastMessage] = useState<{ text: string; isError?: boolean } | null>(null);
+  const [docModal, setDocModal] = useState<{ title: string; url: string; isPdf: boolean } | null>(null);
+
+  const handleOpenDoc = (title: string, url: string) => {
+    if (!url) return;
+    if (url.startsWith("data:")) {
+      try {
+        const arr = url.split(",");
+        const mimeMatch = arr[0].match(/:(.*?);/);
+        const mime = mimeMatch ? mimeMatch[1] : "application/pdf";
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
+        }
+        const blob = new Blob([u8arr], { type: mime });
+        const blobUrl = URL.createObjectURL(blob);
+        setDocModal({ title, url: blobUrl, isPdf: mime.includes("pdf") });
+        return;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    setDocModal({
+      title,
+      url,
+      isPdf: url.toLowerCase().includes("pdf") || url.startsWith("data:application/pdf"),
+    });
+  };
 
   // Edit / Add Modal state for Skills
   const [editingSkill, setEditingSkill] = useState<Partial<Skill> | null>(null);
@@ -72,6 +102,29 @@ export default function RishabhDashboardPage() {
   const [internshipTechInput, setInternshipTechInput] = useState("");
 
   const avatarFileInputRef = useRef<HTMLInputElement | null>(null);
+  const certFileInputRef = useRef<HTMLInputElement | null>(null);
+  const offerLetterFileInputRef = useRef<HTMLInputElement | null>(null);
+  const projectImageFileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleProjectImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      showNotification("Image file size should be less than 5MB.", true);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64Url = event.target?.result as string;
+      if (base64Url) {
+        setEditingProject((prev) => (prev ? { ...prev, imageUrl: base64Url } : null));
+        showNotification("Project image attached successfully!");
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -87,7 +140,47 @@ export default function RishabhDashboardPage() {
       const base64Url = event.target?.result as string;
       if (base64Url) {
         handleProfileChange("avatarUrl", base64Url);
-        showNotification("Image selected successfully! Click 'Save General Profile' to update.");
+        showNotification("Image selected successfully! Click 'Save Profile Changes' to update.");
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleCertFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      showNotification("PDF file size should be less than 10MB.", true);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64Url = event.target?.result as string;
+      if (base64Url) {
+        setEditingInternship((prev) => (prev ? { ...prev, certificateUrl: base64Url } : null));
+        showNotification("Certificate file attached successfully!");
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleOfferLetterFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      showNotification("PDF file size should be less than 10MB.", true);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64Url = event.target?.result as string;
+      if (base64Url) {
+        setEditingInternship((prev) => (prev ? { ...prev, offerLetterUrl: base64Url } : null));
+        showNotification("Offer letter file attached successfully!");
       }
     };
     reader.readAsDataURL(file);
@@ -234,24 +327,17 @@ export default function RishabhDashboardPage() {
       offerLetterUrl: "",
       technologies: [],
     });
-    setInternshipTechInput("");
     setIsInternshipModalOpen(true);
   };
 
   const handleOpenEditInternship = (item: Internship) => {
     setEditingInternship({ ...item });
-    setInternshipTechInput(item.technologies ? item.technologies.join(", ") : "");
     setIsInternshipModalOpen(true);
   };
 
   const handleSaveInternship = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!data || !editingInternship || !editingInternship.role) return;
-
-    const parsedTech = internshipTechInput
-      .split(",")
-      .map((t) => t.trim())
-      .filter((t) => t.length > 0);
 
     const newInternship: Internship = {
       id: editingInternship.id || "intern_" + Date.now(),
@@ -261,7 +347,7 @@ export default function RishabhDashboardPage() {
       description: editingInternship.description || "",
       certificateUrl: editingInternship.certificateUrl || "",
       offerLetterUrl: editingInternship.offerLetterUrl || "",
-      technologies: parsedTech,
+      technologies: editingInternship.technologies || [],
     };
 
     const existingIndex = data.internships.findIndex((i) => i.id === newInternship.id);
@@ -314,13 +400,11 @@ export default function RishabhDashboardPage() {
       githubUrl: "",
       featured: false,
     });
-    setProjectTagsInput("");
     setIsProjectModalOpen(true);
   };
 
   const handleOpenEditProject = (proj: Project) => {
     setEditingProject({ ...proj });
-    setProjectTagsInput(proj.tags ? proj.tags.join(", ") : "");
     setIsProjectModalOpen(true);
   };
 
@@ -328,17 +412,12 @@ export default function RishabhDashboardPage() {
     e.preventDefault();
     if (!data || !editingProject || !editingProject.title) return;
 
-    const parsedTags = projectTagsInput
-      .split(",")
-      .map((t) => t.trim())
-      .filter((t) => t.length > 0);
-
     const newProject: Project = {
       id: editingProject.id || "proj_" + Date.now(),
       title: editingProject.title,
       description: editingProject.description || "",
       category: editingProject.category || "Full Stack",
-      tags: parsedTags,
+      tags: editingProject.tags || [],
       imageUrl: editingProject.imageUrl || "",
       liveUrl: editingProject.liveUrl || "",
       githubUrl: editingProject.githubUrl || "",
@@ -840,9 +919,13 @@ export default function RishabhDashboardPage() {
                   <div className="flex items-center justify-between pt-3 border-t border-[#0d9488]/15">
                     <div className="flex items-center gap-2 text-xs">
                       {item.certificateUrl ? (
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-[#ccfbf1] text-[#0f766e] border border-[#2dd4bf]/40 font-semibold flex items-center gap-1">
-                          <Award className="w-3 h-3" /> Certificate
-                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleOpenDoc(`${item.role} - Certificate`, item.certificateUrl)}
+                          className="text-[10px] px-2.5 py-1 rounded-lg bg-[#ccfbf1] hover:bg-[#2dd4bf]/30 text-[#0f766e] border border-[#2dd4bf]/40 font-semibold flex items-center gap-1 cursor-pointer transition-colors"
+                        >
+                          <Award className="w-3 h-3 text-[#0d9488]" /> Certificate
+                        </button>
                       ) : (
                         <span className="text-[10px] px-2 py-0.5 rounded bg-slate-100 text-[#6b7280]">
                           No Certificate
@@ -850,9 +933,13 @@ export default function RishabhDashboardPage() {
                       )}
 
                       {item.offerLetterUrl && (
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-white text-[#111827] border border-[#2dd4bf]/40 font-semibold flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => handleOpenDoc(`${item.role} - Offer Letter`, item.offerLetterUrl)}
+                          className="text-[10px] px-2.5 py-1 rounded-lg bg-white hover:bg-[#f0fdfa] text-[#111827] border border-[#2dd4bf]/40 font-semibold flex items-center gap-1 cursor-pointer transition-colors"
+                        >
                           <FileText className="w-3 h-3 text-[#0d9488]" /> Offer Letter
-                        </span>
+                        </button>
                       )}
                     </div>
 
@@ -1131,48 +1218,81 @@ export default function RishabhDashboardPage() {
               />
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#111827]">
-                Technologies Used (Comma separated)
-              </label>
-              <input
-                type="text"
-                value={internshipTechInput}
-                onChange={(e) => setInternshipTechInput(e.target.value)}
-                placeholder="React, Next.js, PostgreSQL"
-                className="w-full px-3.5 py-2 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
-              />
-            </div>
-
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-[#111827]">
-                  Certificate Document URL
+                  Certificate PDF File
                 </label>
                 <input
-                  type="url"
-                  value={editingInternship.certificateUrl || ""}
-                  onChange={(e) =>
-                    setEditingInternship({ ...editingInternship, certificateUrl: e.target.value })
-                  }
-                  placeholder="https://example.com/certificate.pdf"
-                  className="w-full px-3.5 py-2 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
+                  type="file"
+                  ref={certFileInputRef}
+                  accept=".pdf,application/pdf,image/*"
+                  onChange={handleCertFileChange}
+                  className="hidden"
                 />
+                <button
+                  type="button"
+                  onClick={() => certFileInputRef.current?.click()}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[#0d9488]/30 hover:border-[#0d9488] text-[#111827] text-xs font-semibold flex items-center justify-between shadow-xs transition-all cursor-pointer group"
+                >
+                  <span className="flex items-center gap-2 truncate">
+                    <FileText className="w-4 h-4 text-[#0d9488] shrink-0" />
+                    <span className="truncate">
+                      {editingInternship.certificateUrl ? "Certificate File Attached" : "Select Certificate PDF"}
+                    </span>
+                  </span>
+                  <Upload className="w-4 h-4 text-[#0d9488] group-hover:scale-110 transition-transform shrink-0 ml-1" />
+                </button>
+                {editingInternship.certificateUrl && (
+                  <div className="flex items-center justify-between text-[11px] text-[#0f766e] bg-[#ccfbf1]/50 px-2.5 py-1 rounded-lg border border-[#2dd4bf]/40 mt-1">
+                    <span className="truncate font-semibold">PDF Ready to Save</span>
+                    <button
+                      type="button"
+                      onClick={() => setEditingInternship({ ...editingInternship, certificateUrl: "" })}
+                      className="text-rose-600 hover:underline font-bold text-[10px] ml-1"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-[#111827]">
-                  Offer Letter Document URL
+                  Offer Letter PDF File
                 </label>
                 <input
-                  type="url"
-                  value={editingInternship.offerLetterUrl || ""}
-                  onChange={(e) =>
-                    setEditingInternship({ ...editingInternship, offerLetterUrl: e.target.value })
-                  }
-                  placeholder="https://example.com/offer-letter.pdf"
-                  className="w-full px-3.5 py-2 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
+                  type="file"
+                  ref={offerLetterFileInputRef}
+                  accept=".pdf,application/pdf,image/*"
+                  onChange={handleOfferLetterFileChange}
+                  className="hidden"
                 />
+                <button
+                  type="button"
+                  onClick={() => offerLetterFileInputRef.current?.click()}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[#0d9488]/30 hover:border-[#0d9488] text-[#111827] text-xs font-semibold flex items-center justify-between shadow-xs transition-all cursor-pointer group"
+                >
+                  <span className="flex items-center gap-2 truncate">
+                    <FileText className="w-4 h-4 text-[#0d9488] shrink-0" />
+                    <span className="truncate">
+                      {editingInternship.offerLetterUrl ? "Offer Letter Attached" : "Select Offer Letter PDF"}
+                    </span>
+                  </span>
+                  <Upload className="w-4 h-4 text-[#0d9488] group-hover:scale-110 transition-transform shrink-0 ml-1" />
+                </button>
+                {editingInternship.offerLetterUrl && (
+                  <div className="flex items-center justify-between text-[11px] text-[#0f766e] bg-[#ccfbf1]/50 px-2.5 py-1 rounded-lg border border-[#2dd4bf]/40 mt-1">
+                    <span className="truncate font-semibold">PDF Ready to Save</span>
+                    <button
+                      type="button"
+                      onClick={() => setEditingInternship({ ...editingInternship, offerLetterUrl: "" })}
+                      className="text-rose-600 hover:underline font-bold text-[10px] ml-1"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -1208,35 +1328,20 @@ export default function RishabhDashboardPage() {
                 : "Add New Project"}
             </h3>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#111827]">
-                  Project Title
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={editingProject.title || ""}
-                  onChange={(e) =>
-                    setEditingProject({ ...editingProject, title: e.target.value })
-                  }
-                  placeholder="e.g. AI SaaS Dashboard"
-                  className="w-full px-3.5 py-2 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#111827]">Category</label>
-                <input
-                  type="text"
-                  value={editingProject.category || "Full Stack"}
-                  onChange={(e) =>
-                    setEditingProject({ ...editingProject, category: e.target.value })
-                  }
-                  placeholder="e.g. Frontend, Full Stack"
-                  className="w-full px-3.5 py-2 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
-                />
-              </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-[#111827]">
+                Project Title
+              </label>
+              <input
+                type="text"
+                required
+                value={editingProject.title || ""}
+                onChange={(e) =>
+                  setEditingProject({ ...editingProject, title: e.target.value })
+                }
+                placeholder="e.g. AI SaaS Dashboard"
+                className="w-full px-3.5 py-2 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
+              />
             </div>
 
             <div className="space-y-1.5">
@@ -1256,30 +1361,47 @@ export default function RishabhDashboardPage() {
 
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-[#111827]">
-                Tech Stack Tags (Comma separated)
+                Project Banner Image
               </label>
               <input
-                type="text"
-                value={projectTagsInput}
-                onChange={(e) => setProjectTagsInput(e.target.value)}
-                placeholder="Next.js, TypeScript, Tailwind CSS"
-                className="w-full px-3.5 py-2 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
+                type="file"
+                ref={projectImageFileInputRef}
+                accept="image/*"
+                onChange={handleProjectImageFileChange}
+                className="hidden"
               />
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#111827]">
-                Image Banner URL
-              </label>
-              <input
-                type="url"
-                value={editingProject.imageUrl || ""}
-                onChange={(e) =>
-                  setEditingProject({ ...editingProject, imageUrl: e.target.value })
-                }
-                placeholder="https://images.unsplash.com/..."
-                className="w-full px-3.5 py-2 rounded-xl bg-white border border-[#0d9488]/25 text-[#111827] text-sm focus:border-[#0d9488] focus:ring-2 focus:ring-[#2dd4bf]/30 focus:outline-none shadow-xs"
-              />
+              <button
+                type="button"
+                onClick={() => projectImageFileInputRef.current?.click()}
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[#0d9488]/30 hover:border-[#0d9488] text-[#111827] text-xs font-semibold flex items-center justify-between shadow-xs transition-all cursor-pointer group"
+              >
+                <span className="flex items-center gap-2 truncate">
+                  <Camera className="w-4 h-4 text-[#0d9488] shrink-0" />
+                  <span className="truncate">
+                    {editingProject.imageUrl ? "Project Image Selected" : "Upload Project Image File"}
+                  </span>
+                </span>
+                <Upload className="w-4 h-4 text-[#0d9488] group-hover:scale-110 transition-transform shrink-0 ml-1" />
+              </button>
+              {editingProject.imageUrl && (
+                <div className="flex items-center justify-between gap-3 text-[11px] text-[#0f766e] bg-[#ccfbf1]/50 p-2 rounded-xl border border-[#2dd4bf]/40 mt-1">
+                  <div className="flex items-center gap-2 overflow-hidden">
+                    <img
+                      src={editingProject.imageUrl}
+                      alt="Preview"
+                      className="w-8 h-8 rounded-lg object-cover border border-slate-200 shrink-0"
+                    />
+                    <span className="truncate font-semibold">Image Ready to Save</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setEditingProject({ ...editingProject, imageUrl: "" })}
+                    className="text-rose-600 hover:underline font-bold text-[10px] shrink-0"
+                  >
+                    Remove
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1345,6 +1467,58 @@ export default function RishabhDashboardPage() {
               </button>
             </div>
           </form>
+        </div>
+      )}
+      {/* Document Viewer Modal */}
+      {docModal && (
+        <div className="fixed inset-0 z-50 bg-[#111827]/60 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200">
+          <div className="w-full max-w-4xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] border border-[#0d9488]/20">
+            {/* Modal Header */}
+            <div className="px-5 py-4 bg-[#f0fdfa] border-b border-[#0d9488]/15 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-lg bg-[#ccfbf1] text-[#0d9488]">
+                  <FileText className="w-4 h-4" />
+                </div>
+                <h3 className="font-bold text-[#111827] text-sm sm:text-base truncate">
+                  {docModal.title}
+                </h3>
+              </div>
+              <div className="flex items-center gap-2">
+                <a
+                  href={docModal.url}
+                  download={`${docModal.title.replace(/[^a-zA-Z0-9]/g, "_")}.pdf`}
+                  className="px-3 py-1.5 rounded-lg bg-[#0d9488] text-white hover:bg-[#0f766e] text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>Download</span>
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setDocModal(null)}
+                  className="p-1.5 rounded-lg text-[#6b7280] hover:text-[#111827] hover:bg-slate-200/60 transition-colors cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div className="flex-1 p-3 sm:p-4 bg-slate-100/50 overflow-hidden flex items-center justify-center">
+              {docModal.isPdf || docModal.url.startsWith("blob:") ? (
+                <iframe
+                  src={docModal.url}
+                  className="w-full h-[70vh] rounded-xl border border-slate-200 bg-white"
+                  title={docModal.title}
+                />
+              ) : (
+                <img
+                  src={docModal.url}
+                  alt={docModal.title}
+                  className="max-h-[70vh] max-w-full object-contain rounded-xl shadow-md"
+                />
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>
