@@ -82,10 +82,10 @@ function TypewriterName({ name }: { name: string }) {
 
   return (
     <span className="inline-flex items-center">
-      <span className="bg-gradient-to-r from-[#0d9488] via-[#14b8a6] to-[#0f766e] bg-clip-text text-transparent">
-        {displayText}
+      <span className="bg-gradient-to-r from-[#0d9488] via-[#14b8a6] to-[#0f766e] bg-clip-text text-transparent min-h-[1.15em] inline-block">
+        {displayText || "\u00A0"}
       </span>
-      <span className="inline-block w-[3px] h-[0.8em] ml-1 bg-[#0d9488] animate-pulse rounded-full"></span>
+      <span className="inline-block w-[3px] h-[0.8em] ml-1 bg-[#0d9488] animate-pulse rounded-full shrink-0"></span>
     </span>
   );
 }
@@ -248,8 +248,12 @@ export default function Home() {
             <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
               <div className="space-y-3">
                 <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight text-[#111827]">
-                  Hi, I&apos;m{" "}
-                  <TypewriterName name={profile.name} />
+                  <span className="block text-3xl sm:text-5xl text-[#111827] font-bold mb-1">
+                    Hi, I&apos;m
+                  </span>
+                  <span className="block min-h-[1.25em]">
+                    <TypewriterName name={profile.name} />
+                  </span>
                 </h1>
                 <h2 className="text-lg sm:text-2xl font-semibold text-[#374151]">
                   {profile.title}
